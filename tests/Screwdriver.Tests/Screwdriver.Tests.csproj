@@ -44,13 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GivenLogicalAssertions.cs" />
+    <Compile Include="GivenTestRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Fakes\TestException.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Screwdriver\Screwdriver.csproj">
       <Project>{BB629455-8566-4881-870E-7B47EAD48046}</Project>
       <Name>Mojito</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

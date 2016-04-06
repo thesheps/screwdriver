@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Screwdriver</id>
+    <version>$version$</version>
+    <title>Screwdriver</title>
+    <authors>Chris Shepherd</authors>
+    <owners>Chris Shepherd</owners>
+    <iconUrl>https://raw.githubusercontent.com/thesheps/screwdriver/master/src/nuget-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Yet another testing framework.</description>
+    <releaseNotes></releaseNotes>
+    <tags>unit testing fluent builder mocking faking test runner</tags>
+  </metadata>
+
+  <files>
+    <file src="Screwdriver\bin\$configuration$\Screwdriver.dll" target="lib" />
+  </files>
+</package>

@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{1F7D5821-E63E-4609-A0AC-1BC8DAB7765B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B2583FC6-7B98-4F75-95D1-97DEA4002F2D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{0F2DDCCB-BF58-4C9F-902F-E1FADF931711}"
+	ProjectSection(SolutionItems) = preProject
+		src\nuget-icon.png = src\nuget-icon.png
+		src\Screwdriver.nuspec = src\Screwdriver.nuspec
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Screwdriver", "src\Screwdriver\Screwdriver.csproj", "{BB629455-8566-4881-870E-7B47EAD48046}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Screwdriver.Tests", "tests\Screwdriver.Tests\Screwdriver.Tests.csproj", "{B56FC2B9-1D0C-4E2B-A955-C7CE2B9FEF41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB629455-8566-4881-870E-7B47EAD48046}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB629455-8566-4881-870E-7B47EAD48046}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB629455-8566-4881-870E-7B47EAD48046}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB629455-8566-4881-870E-7B47EAD48046}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B56FC2B9-1D0C-4E2B-A955-C7CE2B9FEF41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B56FC2B9-1D0C-4E2B-A955-C7CE2B9FEF41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B56FC2B9-1D0C-4E2B-A955-C7CE2B9FEF41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B56FC2B9-1D0C-4E2B-A955-C7CE2B9FEF41}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BB629455-8566-4881-870E-7B47EAD48046} = {1F7D5821-E63E-4609-A0AC-1BC8DAB7765B}
+		{B56FC2B9-1D0C-4E2B-A955-C7CE2B9FEF41} = {B2583FC6-7B98-4F75-95D1-97DEA4002F2D}
+	EndGlobalSection
+EndGlobal

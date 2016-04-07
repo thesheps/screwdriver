@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Screwdriver.Mocking</id>
+    <version>$version$</version>
+    <title>Screwdriver.Mocking</title>
+    <authors>Chris Shepherd</authors>
+    <owners>Chris Shepherd</owners>
+    <iconUrl>https://raw.githubusercontent.com/thesheps/screwdriver/master/src/nuget-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Supporting library for Screwdriver, adding a mocking framework.</description>
+    <releaseNotes></releaseNotes>
+    <tags>unit testing mocking mock fake generic fluent</tags>
+  </metadata>
+
+  <files>
+    <file src="Screwdriver.Mocking\bin\$configuration$\Screwdriver.Mocking.dll" target="lib" />
+  </files>
+</package>

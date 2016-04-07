@@ -9,7 +9,7 @@ namespace Screwdriver.Builders.Tests
         [Test]
         public void WhenIUseDynamicBuilderAndCorrectPropertyNameAndValue_ThenPropertyValueIsCorrectlySet()
         {
-            var builder = new Builder<Person>();
+            var builder = Builder.Create<Person>();
             builder.With
                 .FirstName("Steve")
                 .Surname("Mclaren");
@@ -22,14 +22,14 @@ namespace Screwdriver.Builders.Tests
         [Test]
         public void WhenIUseDynamicBuilderAndIncorrectPropertyName_ThenUnknownPropertyExceptionIsThrown()
         {
-            var builder = new Builder<Person>();
+            var builder = Builder.Create<Person>();
             Assert.Throws<UnknownPropertyException>(() => { builder.With.Test("Steve"); });
         }
 
         [Test]
         public void WhenIUseDynamicBuilderAndIncorrectPropertyType_ThenUnknownPropertyExceptionIsThrown()
         {
-            var builder = new Builder<Person>();
+            var builder = Builder.Create<Person>();
             Assert.Throws<UnknownPropertyException>(() => { builder.With.FirstName(42); });
         }
     }

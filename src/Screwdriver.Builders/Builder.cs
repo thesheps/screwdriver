@@ -4,11 +4,29 @@ using Screwdriver.Builders.Exceptions;
 
 namespace Screwdriver.Builders
 {
+    public interface IBuilder<out T>
+    {
+        T Build();
+    }
+
+    public class Builder
+    {
+        public static T Create<T>(IBuilder<T> builder)
+        {
+            return builder.Build();
+        }
+
+        public static Builder<T> Create<T>()
+        {
+            return new Builder<T>();
+        }
+    }
+
     public class Builder<T>
     {
         public dynamic With { get; }
 
-        public Builder()
+        internal Builder()
         {
             With = new DynamicBuilder<T>();
         }

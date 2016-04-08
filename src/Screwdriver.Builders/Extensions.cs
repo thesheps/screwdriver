@@ -2,7 +2,7 @@
 
 namespace Screwdriver.Builders
 {
-    public static class BuilderExtensions
+    public static class Extensions
     {
         public static T With<T>(this T obj, Action<T> function)
         {

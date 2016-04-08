@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -16,7 +17,7 @@ namespace Screwdriver.Mocking
 
         public static T Out<T>()
         {
-            var typeBuilder = ModuleBuilder.DefineType($"Mock<{typeof(T).Name}>", TypeAttributes.Public | TypeAttributes.Class);
+            var typeBuilder = ModuleBuilder.DefineType(GetUniqueTypeName<T>(), TypeAttributes.Public | TypeAttributes.Class, typeof(Proxy));
             typeBuilder.AddInterfaceImplementation(typeof(T));
 
             foreach (var methodInfo in typeof(T).GetMethods())
@@ -30,25 +31,35 @@ namespace Screwdriver.Mocking
             return (T)Activator.CreateInstance(type);
         }
 
+        private static string GetUniqueTypeName<T>()
+        {
+            var type = typeof(T);
+
+            if (!_uniqueTypeCounts.ContainsKey(type))
+                _uniqueTypeCounts.Add(type, 0);
+
+            _uniqueTypeCounts[type]++;
+
+            return $"Mock<{typeof(T).Name}_{_uniqueTypeCounts[type]}>";
+        }
+
         private static MethodBuilder GetDefaultMethodImplementation<T>(TypeBuilder typeBuilder, MethodInfo methodInfo)
         {
             var methodBuilder = typeBuilder.DefineMethod($"{nameof(T)}.{methodInfo.Name}",
-                MethodAttributes.Public
-                | MethodAttributes.HideBySig
-                | MethodAttributes.NewSlot
-                | MethodAttributes.Virtual
-                | MethodAttributes.Final,
-                CallingConventions.HasThis,
+                MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.HasThis,
                 methodInfo.ReturnType,
-                methodInfo.GetParameters().Select(p => p.ParameterType).ToArray()
-                );
+                methodInfo.GetParameters().Select(p => p.ParameterType).ToArray());
 
-            var ilGenerator = methodBuilder.GetILGenerator();
-            ilGenerator.Emit(OpCodes.Ret);
+            var il = methodBuilder.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldstr, methodInfo.Name);
+            il.Emit(OpCodes.Call, typeof(Proxy).GetMethod("CallMethod"));
+            il.Emit(OpCodes.Ret);
 
             return methodBuilder;
         }
 
+        private static IDictionary<Type, int> _uniqueTypeCounts = new Dictionary<Type, int>();
         private static readonly ModuleBuilder ModuleBuilder;
     }
 }

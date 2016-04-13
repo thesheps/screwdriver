@@ -1,31 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Screwdriver.Mocking
 {
     public interface IProxy
     {
-        void CallMethod([CallerMemberName] string methodName = null);
-        bool HasMethodBeenCalled(Action action);
+        void CallMethod(string methodName, object obj);
+        bool HasMethodBeenCalled(Action action, params object[] parameters);
     }
 
     public abstract class Proxy : IProxy
     {
-        public void CallMethod([CallerMemberName] string methodName = null)
+        public void CallMethod(string methodName, object obj)
         {
             if (!_methodCalls.ContainsKey(methodName))
-                _methodCalls.Add(methodName, 0);
+                _methodCalls.Add(methodName, new MethodCall(new[] { obj }));
 
-            _methodCalls[methodName]++;
+            _methodCalls[methodName].Calls++;
         }
 
-        public bool HasMethodBeenCalled(Action action)
+        public bool HasMethodBeenCalled(Action action, params object[] parameters)
         {
-            return _methodCalls.ContainsKey(action.Method.Name.Split('.').Last());
+            MethodCall methodCall;
+            var key = action.Method.Name.Split('.').Last();
+
+            return _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
         }
 
-        private readonly IDictionary<string, int> _methodCalls = new Dictionary<string, int>();
+        private readonly IDictionary<string, MethodCall> _methodCalls = new Dictionary<string, MethodCall>();
+
+        private class MethodCall
+        {
+            public IList<object> Parameters { get; }
+            public int Calls { get; set; }
+
+            public MethodCall(IList<object> parameters)
+            {
+                Parameters = parameters;
+                Calls = 1;
+            }
+        }
     }
 }

@@ -35,31 +35,33 @@ namespace Screwdriver.Mocking
         {
             var type = typeof(T);
 
-            if (!_uniqueTypeCounts.ContainsKey(type))
-                _uniqueTypeCounts.Add(type, 0);
+            if (!UniqueTypeCounts.ContainsKey(type))
+                UniqueTypeCounts.Add(type, 0);
 
-            _uniqueTypeCounts[type]++;
+            UniqueTypeCounts[type]++;
 
-            return $"Mock<{typeof(T).Name}_{_uniqueTypeCounts[type]}>";
+            return $"Mock<{typeof(T).Name}_{UniqueTypeCounts[type]}>";
         }
 
         private static MethodBuilder GetDefaultMethodImplementation<T>(TypeBuilder typeBuilder, MethodInfo methodInfo)
         {
+            var parameters = methodInfo.GetParameters().Select(p => p.ParameterType).ToArray();
             var methodBuilder = typeBuilder.DefineMethod($"{nameof(T)}.{methodInfo.Name}",
                 MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.HasThis,
                 methodInfo.ReturnType,
-                methodInfo.GetParameters().Select(p => p.ParameterType).ToArray());
+                parameters);
 
             var il = methodBuilder.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldstr, methodInfo.Name);
-            il.Emit(OpCodes.Call, typeof(Proxy).GetMethod("CallMethod"));
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Call, typeof(Proxy).GetMethod("CallMethod", new[] {typeof(string), typeof(object[])}));
             il.Emit(OpCodes.Ret);
 
             return methodBuilder;
         }
 
-        private static IDictionary<Type, int> _uniqueTypeCounts = new Dictionary<Type, int>();
+        private static readonly IDictionary<Type, int> UniqueTypeCounts = new Dictionary<Type, int>();
         private static readonly ModuleBuilder ModuleBuilder;
     }
 }

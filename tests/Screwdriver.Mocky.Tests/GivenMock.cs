@@ -20,5 +20,25 @@ namespace Screwdriver.Mocking.Tests
 
             Assert.That(mock.WasCalled(mock.DoTheThing), Is.EqualTo(true));
         }
+
+        [Test]
+        public void WhenIMockAMethod_ThenTheMockedMethodRecordsThatItHasBeenCalledWithSpecifiedArguments()
+        {
+            var mock = Mock.Out<IMockableInterfaceA>();
+            mock.DoTheThing(123);
+
+            Assert.That(mock.WasCalled(mock.DoTheThing, 123), Is.EqualTo(true));
+        }
+
+        [Test]
+        public void WhenIMockAnOverloadedMethod_ThenTheMockedMethodRecordsThatItHasBeenCalledWithSpecifiedArguments()
+        {
+            var mock = Mock.Out<IMockableInterfaceA>();
+            const string helloWorld = "Hello World";
+
+            mock.DoTheThing(helloWorld);
+
+            Assert.That(mock.WasCalled(mock.DoTheThing, helloWorld), Is.EqualTo(true));
+        }
     }
 }

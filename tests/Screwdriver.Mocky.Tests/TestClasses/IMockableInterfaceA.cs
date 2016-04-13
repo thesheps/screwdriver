@@ -3,5 +3,7 @@
     public interface IMockableInterfaceA
     {
         void DoTheThing();
+        void DoTheThing(int i);
+        void DoTheThing(string str);
     }
 }

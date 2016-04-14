@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using Screwdriver.Mocking.Proxies;
 
 namespace Screwdriver.Mocking
 {
@@ -17,7 +18,7 @@ namespace Screwdriver.Mocking
 
         public static T Out<T>()
         {
-            var typeBuilder = ModuleBuilder.DefineType(GetUniqueTypeName<T>(), TypeAttributes.Public | TypeAttributes.Class, typeof(Proxy));
+            var typeBuilder = ModuleBuilder.DefineType(GetUniqueTypeName<T>(), TypeAttributes.Public | TypeAttributes.Class, typeof(ObjectProxy));
             typeBuilder.AddInterfaceImplementation(typeof(T));
 
             foreach (var methodInfo in typeof(T).GetMethods())
@@ -72,7 +73,7 @@ namespace Screwdriver.Mocking
             }
 
             il.Emit(OpCodes.Ldloc_0);
-            il.Emit(OpCodes.Call, typeof(Proxy).GetMethod("CallMethod"));
+            il.Emit(OpCodes.Call, typeof(ObjectProxy).GetMethod("CallMethod"));
             il.Emit(OpCodes.Ret);
 
             return methodBuilder;

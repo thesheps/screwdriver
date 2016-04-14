@@ -18,7 +18,7 @@ namespace Screwdriver.Mocking.Tests
             var mock = Mock.Out<IMockableInterfaceA>();
             mock.DoTheThing();
 
-            Assert.That(mock.WasCalled(mock.DoTheThing), Is.EqualTo(true));
+            Assert.That(mock.WasCalled(mock.DoTheThing).AtLeastOnce(), Is.EqualTo(true));
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace Screwdriver.Mocking.Tests
             var mock = Mock.Out<IMockableInterfaceA>();
             mock.DoTheThing(123);
 
-            Assert.That(mock.WasCalled(mock.DoTheThing, 123), Is.EqualTo(true));
+            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(123), Is.EqualTo(true));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Screwdriver.Mocking.Tests
 
             mock.DoTheThing(helloWorld);
 
-            Assert.That(mock.WasCalled(mock.DoTheThing, helloWorld), Is.EqualTo(true));
+            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(helloWorld), Is.EqualTo(true));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace Screwdriver.Mocking.Tests
 
             mock.DoTheThing(obj);
 
-            Assert.That(mock.WasCalled(mock.DoTheThing, obj), Is.EqualTo(true));
+            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(obj), Is.EqualTo(true));
         }
     }
 }

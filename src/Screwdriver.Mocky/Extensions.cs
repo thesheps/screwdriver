@@ -1,17 +1,18 @@
 ﻿using System;
 using Screwdriver.Mocking.Exceptions;
+using Screwdriver.Mocking.Proxies;
 
 namespace Screwdriver.Mocking
 {
     public static class Extensions
     {
-        public static bool WasCalled(this object obj, Action action, params object[] parameters)
+        public static IMethodProxy WasCalled(this object obj, Action action)
         {
-            var proxy = obj as IProxy;
-            if (proxy == null)
+            var objectProxy = obj as IObjectProxy;
+            if (objectProxy == null)
                 throw new ProxyNotImplementedException(obj.GetType());
 
-            return proxy.HasMethodBeenCalled(action, parameters);
+            return new MethodProxy(objectProxy, action);
         }
     }
 }

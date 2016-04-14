@@ -7,7 +7,7 @@ namespace Screwdriver.Mocking.Proxies
     public interface IObjectProxy
     {
         void CallMethod(string methodName, object[] parameters);
-        bool HasMethodBeenCalled(Action action, object[] parameters);
+        int GetMethodCallCount(Action action, object[] parameters);
     }
 
     public abstract class ObjectProxy : IObjectProxy
@@ -20,12 +20,13 @@ namespace Screwdriver.Mocking.Proxies
             _methodCalls[methodName].Calls++;
         }
 
-        public bool HasMethodBeenCalled(Action action, object[] parameters)
+        public int GetMethodCallCount(Action action, object[] parameters)
         {
             MethodCall methodCall;
             var key = action.Method.Name.Split('.').Last();
+            var found = _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
 
-            return _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
+            return found ? methodCall.Calls : 0;
         }
 
         private class MethodCall
@@ -36,7 +37,6 @@ namespace Screwdriver.Mocking.Proxies
             public MethodCall(IList<object> parameters)
             {
                 Parameters = parameters;
-                Calls = 1;
             }
         }
 

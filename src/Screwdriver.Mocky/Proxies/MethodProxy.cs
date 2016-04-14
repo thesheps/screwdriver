@@ -5,7 +5,8 @@ namespace Screwdriver.Mocking.Proxies
     public interface IMethodProxy
     {
         bool AtLeastOnce();
-        bool WithParameters(params object[] parameters);
+        bool Exactly(int times);
+        IMethodProxy WithParameters(params object[] parameters);
     }
 
     public class MethodProxy : IMethodProxy
@@ -18,15 +19,22 @@ namespace Screwdriver.Mocking.Proxies
 
         public bool AtLeastOnce()
         {
-            return _objectProxy.HasMethodBeenCalled(_action, new object[] { });
+            return _objectProxy.GetMethodCallCount(_action, _parameters) >= 1;
         }
 
-        public bool WithParameters(params object[] parameters)
+        public bool Exactly(int times)
         {
-            return _objectProxy.HasMethodBeenCalled(_action, parameters);
+            return _objectProxy.GetMethodCallCount(_action, _parameters) == times;
+        }
+
+        public IMethodProxy WithParameters(params object[] parameters)
+        {
+            _parameters = parameters;
+            return this;
         }
 
         private readonly IObjectProxy _objectProxy;
         private readonly Action _action;
+        private object[] _parameters = { };
     }
 }

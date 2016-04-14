@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using Screwdriver.Mocking.Tests.TestClasses;
 
 namespace Screwdriver.Mocking.Tests
@@ -27,7 +28,7 @@ namespace Screwdriver.Mocking.Tests
             var mock = Mock.Out<IMockableInterfaceA>();
             mock.DoTheThing(123);
 
-            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(123), Is.EqualTo(true));
+            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(123).AtLeastOnce(), Is.EqualTo(true));
         }
 
         [Test]
@@ -38,7 +39,7 @@ namespace Screwdriver.Mocking.Tests
 
             mock.DoTheThing(helloWorld);
 
-            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(helloWorld), Is.EqualTo(true));
+            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(helloWorld).AtLeastOnce(), Is.EqualTo(true));
         }
 
         [Test]
@@ -49,7 +50,17 @@ namespace Screwdriver.Mocking.Tests
 
             mock.DoTheThing(obj);
 
-            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(obj), Is.EqualTo(true));
+            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(obj).AtLeastOnce(), Is.EqualTo(true));
+        }
+
+        [Test]
+        public void WhenIMockAMethodAndCallItTenTimes_ThenICanDetermineThatItWasCalledTenTimes()
+        {
+            var mock = Mock.Out<IMockableInterfaceA>();
+            var obj = new { Test = "Hello World" };
+            Enumerable.Range(0, 10).ToList().ForEach(i => mock.DoTheThing(obj));
+
+            Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(obj).Exactly(10), Is.EqualTo(true));
         }
     }
 }

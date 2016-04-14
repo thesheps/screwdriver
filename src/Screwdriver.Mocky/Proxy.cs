@@ -6,16 +6,16 @@ namespace Screwdriver.Mocking
 {
     public interface IProxy
     {
-        void CallMethod(string methodName, object obj);
+        void CallMethod(string methodName, object[] parameters);
         bool HasMethodBeenCalled(Action action, params object[] parameters);
     }
 
     public abstract class Proxy : IProxy
     {
-        public void CallMethod(string methodName, object obj)
+        public void CallMethod(string methodName, object[] parameters)
         {
             if (!_methodCalls.ContainsKey(methodName))
-                _methodCalls.Add(methodName, new MethodCall(new[] { obj }));
+                _methodCalls.Add(methodName, new MethodCall(parameters));
 
             _methodCalls[methodName].Calls++;
         }

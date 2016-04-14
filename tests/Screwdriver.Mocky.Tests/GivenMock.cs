@@ -22,7 +22,7 @@ namespace Screwdriver.Mocking.Tests
         }
 
         [Test]
-        public void WhenIMockAMethod_ThenTheMockedMethodRecordsThatItHasBeenCalledWithSpecifiedArguments()
+        public void WhenIMockAMethodWithParametersRequiringBoxing_ThenTheMockedMethodRecordsThatItHasBeenCalledWithSpecifiedArguments()
         {
             var mock = Mock.Out<IMockableInterfaceA>();
             mock.DoTheThing(123);
@@ -31,7 +31,7 @@ namespace Screwdriver.Mocking.Tests
         }
 
         [Test]
-        public void WhenIMockAnOverloadedMethod_ThenTheMockedMethodRecordsThatItHasBeenCalledWithSpecifiedArguments()
+        public void WhenIMockAMethodWithBoxedParameters_ThenTheMockedMethodRecordsThatItHasBeenCalledWithSpecifiedArguments()
         {
             var mock = Mock.Out<IMockableInterfaceA>();
             const string helloWorld = "Hello World";

@@ -48,14 +48,27 @@ namespace Screwdriver.Mocking
             var parameters = methodInfo.GetParameters().Select(p => p.ParameterType).ToArray();
             var methodBuilder = typeBuilder.DefineMethod($"{nameof(T)}.{methodInfo.Name}",
                 MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.HasThis,
-                methodInfo.ReturnType,
-                parameters);
+                methodInfo.ReturnType, parameters);
 
             var il = methodBuilder.GetILGenerator();
             il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldstr, methodInfo.Name);
-            il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, typeof(Proxy).GetMethod("CallMethod", new[] {typeof(string), typeof(object[])}));
+
+            var objArray = il.DeclareLocal(typeof(object[]));
+            il.Emit(OpCodes.Ldc_I4, parameters.Length);
+            il.Emit(OpCodes.Newarr, typeof(object));
+            il.Emit(OpCodes.Stloc, objArray.LocalIndex);
+
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                il.Emit(OpCodes.Ldloc, objArray.LocalIndex);
+                il.Emit(OpCodes.Ldc_I4, i);
+                il.Emit(OpCodes.Ldarg, i + 1);
+                il.Emit(OpCodes.Stelem, typeof(object));
+            }
+
+            il.Emit(OpCodes.Ldloc_0);
+            il.Emit(OpCodes.Call, typeof(Proxy).GetMethod("CallMethod"));
             il.Emit(OpCodes.Ret);
 
             return methodBuilder;

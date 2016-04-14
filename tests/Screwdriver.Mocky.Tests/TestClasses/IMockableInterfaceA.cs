@@ -5,5 +5,6 @@
         void DoTheThing();
         void DoTheThing(int i);
         void DoTheThing(string str);
+        void DoTheThing(object obj);
     }
 }

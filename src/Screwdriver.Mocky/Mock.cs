@@ -64,6 +64,10 @@ namespace Screwdriver.Mocking
                 il.Emit(OpCodes.Ldloc, objArray.LocalIndex);
                 il.Emit(OpCodes.Ldc_I4, i);
                 il.Emit(OpCodes.Ldarg, i + 1);
+
+                if (parameters[i].IsValueType)
+                    il.Emit(OpCodes.Box, parameters[i]);
+
                 il.Emit(OpCodes.Stelem, typeof(object));
             }
 

@@ -8,19 +8,13 @@ namespace Screwdriver.Mocking
     {
         public static IMethodProxy WasCalled(this object obj, Action action)
         {
-            var objectProxy = obj as IObjectProxy;
-            if (objectProxy == null)
-                throw new ProxyNotImplementedException(obj.GetType());
-
+            var objectProxy = GetMethodProxy(obj);
             return new MethodProxy(objectProxy, action);
         }
 
         public static object Setup(this object obj, Action action, Action methodBody)
         {
-            var objectProxy = obj as IObjectProxy;
-            if (objectProxy == null)
-                throw new ProxyNotImplementedException(obj.GetType());
-
+            var objectProxy = GetMethodProxy(obj);
             objectProxy.SetupMethod(action, new object[] { }, methodBody);
 
             return obj;
@@ -28,10 +22,7 @@ namespace Screwdriver.Mocking
 
         public static object Setup(this object obj, Action action, Action methodBody, params object[] arguments)
         {
-            var objectProxy = obj as IObjectProxy;
-            if (objectProxy == null)
-                throw new ProxyNotImplementedException(obj.GetType());
-
+            var objectProxy = GetMethodProxy(obj);
             objectProxy.SetupMethod(action, arguments, methodBody);
 
             return obj;
@@ -39,13 +30,18 @@ namespace Screwdriver.Mocking
 
         public static object Returns(this object obj, Func<object> function, object returnedValue, params object[] arguments)
         {
-            var objectProxy = obj as IObjectProxy;
-            if (objectProxy == null)
-                throw new ProxyNotImplementedException(obj.GetType());
-
+            var objectProxy = GetMethodProxy(obj);
             objectProxy.SetupReturnedValue(function, arguments, returnedValue);
 
             return obj;
+        }
+
+        private static IObjectProxy GetMethodProxy(object obj)
+        {
+            var objectProxy = obj as IObjectProxy;
+            if (objectProxy == null)
+                throw new ProxyNotImplementedException(obj.GetType());
+            return objectProxy;
         }
     }
 }

@@ -73,7 +73,12 @@ namespace Screwdriver.Mocking
             }
 
             il.Emit(OpCodes.Ldloc_0);
-            il.Emit(OpCodes.Call, typeof(ObjectProxy).GetMethod("CallMethod"));
+
+            il.Emit(OpCodes.Call,
+                methodInfo.ReturnType == typeof (void)
+                    ? typeof (ObjectProxy).GetMethod("CallVoidMethod")
+                    : typeof (ObjectProxy).GetMethod("CallReturningMethod"));
+
             il.Emit(OpCodes.Ret);
 
             return methodBuilder;

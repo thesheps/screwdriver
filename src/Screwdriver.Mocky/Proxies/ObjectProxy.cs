@@ -6,17 +6,24 @@ namespace Screwdriver.Mocking.Proxies
 {
     public interface IObjectProxy
     {
-        void CallMethod(string methodName, object[] parameters);
+        void CallVoidMethod(string methodName, object[] parameters);
+        object CallReturningMethod(string methodName, object[] parameters);
         void SetupMethod(Action action, object[] parameters, Action methodBody);
+        void SetupReturn(Func<object> function, object[] parameters, object returnedValue);
         int GetMethodCallCount(Action action, object[] parameters);
     }
 
     public abstract class ObjectProxy : IObjectProxy
     {
-        public void CallMethod(string methodName, object[] parameters)
+        public void CallVoidMethod(string methodName, object[] parameters)
+        {
+            CallReturningMethod(methodName, parameters);
+        }
+
+        public object CallReturningMethod(string methodName, object[] parameters)
         {
             MethodCall methodCall;
-            var key = GetKey(methodName, parameters);
+            var key = CreateMethodCallKey(methodName, parameters);
             var found = _methodCalls.TryGetValue(key, out methodCall);
 
             if (!found)
@@ -26,26 +33,63 @@ namespace Screwdriver.Mocking.Proxies
             }
 
             if (methodCall.Parameters.All(parameters.Contains))
-                methodCall.Execute();
+                return methodCall.Execute();
+
+            return null;
         }
 
         public void SetupMethod(Action action, object[] parameters, Action methodBody)
         {
-            var key = GetKey(action.Method.Name.Split('.').Last(), parameters);
-            if (!_methodCalls.ContainsKey(key))
-                _methodCalls.Add(key, new MethodCall(parameters, methodBody));
+            MethodCall methodCall;
+            var key = CreateMethodCallKey(action, parameters);
+            var found = _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
+
+            if (!found)
+            {
+                methodCall = new MethodCall(parameters);
+                methodCall.SetMethodBody(methodBody);
+                _methodCalls.Add(key, methodCall);
+            }
+            else
+                methodCall.SetMethodBody(methodBody);
+        }
+
+        public void SetupReturn(Func<object> function, object[] parameters, object returnedValue)
+        {
+            MethodCall methodCall;
+            var key = CreateMethodCallKey(function, parameters);
+            var found = _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
+
+            if (!found)
+            {
+                methodCall = new MethodCall(parameters);
+                methodCall.SetReturnedValue(returnedValue);
+                _methodCalls.Add(key, methodCall);
+            }
+            else
+                methodCall.SetReturnedValue(returnedValue);
         }
 
         public int GetMethodCallCount(Action action, object[] parameters)
         {
             MethodCall methodCall;
-            var key = GetKey(action.Method.Name.Split('.').Last(), parameters);
+            var key = CreateMethodCallKey(action, parameters);
             var found = _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
 
             return found ? methodCall.Calls : 0;
         }
 
-        private static string GetKey(string methodName, IEnumerable<object> parameters)
+        private static string CreateMethodCallKey(Func<object> function, IEnumerable<object> parameters)
+        {
+            return CreateMethodCallKey(function.Method.Name.Split('.').Last(), parameters);
+        }
+
+        private static string CreateMethodCallKey(Action action, IEnumerable<object> parameters)
+        {
+            return CreateMethodCallKey(action.Method.Name.Split('.').Last(), parameters);
+        }
+
+        private static string CreateMethodCallKey(string methodName, IEnumerable<object> parameters)
         {
             return $"{methodName}_{string.Join("_", parameters.Select(p => p.GetType().Name))}";
         }
@@ -60,19 +104,25 @@ namespace Screwdriver.Mocking.Proxies
                 Parameters = parameters;
             }
 
-            public MethodCall(IList<object> parameters, Action methodBody)
+            public void SetMethodBody(Action methodBody)
             {
-                Parameters = parameters;
                 _methodBody = methodBody;
             }
 
-            public void Execute()
+            public void SetReturnedValue(object returnedValue)
+            {
+                _returnedValue = returnedValue;
+            }
+
+            public object Execute()
             {
                 Calls++;
                 _methodBody?.Invoke();
+                return _returnedValue;
             }
 
-            private readonly Action _methodBody;
+            private Action _methodBody;
+            private object _returnedValue;
         }
 
         private readonly IDictionary<string, MethodCall> _methodCalls = new Dictionary<string, MethodCall>();

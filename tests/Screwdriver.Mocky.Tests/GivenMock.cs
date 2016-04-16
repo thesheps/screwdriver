@@ -84,5 +84,17 @@ namespace Screwdriver.Mocking.Tests
 
             Assert.That(called, Is.EqualTo(false));
         }
+
+        [Test]
+        public void WhenIMockAMethodToReturnASpecificValue_ThenTheMethodReturnsTheExpectedValue()
+        {
+            var mock = Mock.Out<IMockableInterfaceA>();
+            const string expectedString = "Hello World";
+            mock.Returns(mock.GetTheThing, expectedString);
+
+            var results = mock.GetTheThing();
+
+            Assert.That(results, Is.EqualTo(expectedString));
+        }
     }
 }

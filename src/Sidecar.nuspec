@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Sidecar</id>
+    <version>$version$</version>
+    <title>Sidecar</title>
+    <authors>Chris Shepherd</authors>
+    <owners>Chris Shepherd</owners>
+    <iconUrl>https://raw.githubusercontent.com/thesheps/screwdriver/master/src/sidecar-nuget-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Builder pattern library supporting unit testing and more.</description>
+    <releaseNotes></releaseNotes>
+    <tags>unit testing builder pattern generic fluent</tags>
+  </metadata>
+
+  <files>
+    <file src="Sidecar\bin\$configuration$\Sidecar.dll" target="lib" />
+  </files>
+</package>

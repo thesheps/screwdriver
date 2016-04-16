@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Spritz</id>
+    <version>$version$</version>
+    <title>Spritz</title>
+    <authors>Chris Shepherd</authors>
+    <owners>Chris Shepherd</owners>
+    <iconUrl>https://raw.githubusercontent.com/thesheps/screwdriver/master/src/spritz-nuget-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A mocking framework library.</description>
+    <releaseNotes></releaseNotes>
+    <tags>unit testing mocking mock fake generic fluent</tags>
+  </metadata>
+
+  <files>
+    <file src="Spritz\bin\$configuration$\Spritz.dll" target="lib" />
+  </files>
+</package>

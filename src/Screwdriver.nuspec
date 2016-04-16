@@ -6,7 +6,7 @@
     <title>Screwdriver</title>
     <authors>Chris Shepherd</authors>
     <owners>Chris Shepherd</owners>
-    <iconUrl>https://raw.githubusercontent.com/thesheps/screwdriver/master/src/nuget-icon.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/thesheps/screwdriver/master/src/screwdriver-nuget-icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Yet another testing framework.</description>
     <releaseNotes></releaseNotes>

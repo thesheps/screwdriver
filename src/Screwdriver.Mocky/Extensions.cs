@@ -43,7 +43,7 @@ namespace Screwdriver.Mocking
             if (objectProxy == null)
                 throw new ProxyNotImplementedException(obj.GetType());
 
-            objectProxy.SetupReturn(function, arguments, returnedValue);
+            objectProxy.SetupReturnedValue(function, arguments, returnedValue);
 
             return obj;
         }

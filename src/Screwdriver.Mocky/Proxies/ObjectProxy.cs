@@ -9,7 +9,7 @@ namespace Screwdriver.Mocking.Proxies
         void CallVoidMethod(string methodName, object[] parameters);
         object CallReturningMethod(string methodName, object[] parameters);
         void SetupMethod(Action action, object[] parameters, Action methodBody);
-        void SetupReturn(Func<object> function, object[] parameters, object returnedValue);
+        void SetupReturnedValue(Func<object> function, object[] parameters, object returnedValue);
         int GetMethodCallCount(Action action, object[] parameters);
     }
 
@@ -26,48 +26,40 @@ namespace Screwdriver.Mocking.Proxies
             var key = CreateMethodCallKey(methodName, parameters);
             var found = _methodCalls.TryGetValue(key, out methodCall);
 
-            if (!found)
-            {
-                methodCall = new MethodCall(parameters);
-                _methodCalls.Add(key, methodCall);
-            }
+            if (found)
+                return methodCall.Parameters.All(parameters.Contains) ? methodCall.Execute() : null;
 
-            if (methodCall.Parameters.All(parameters.Contains))
-                return methodCall.Execute();
+            methodCall = new MethodCall(parameters);
+            _methodCalls.Add(key, methodCall);
 
-            return null;
+            return methodCall.Parameters.All(parameters.Contains) ? methodCall.Execute() : null;
         }
 
         public void SetupMethod(Action action, object[] parameters, Action methodBody)
         {
-            MethodCall methodCall;
             var key = CreateMethodCallKey(action, parameters);
-            var found = _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
-
-            if (!found)
-            {
-                methodCall = new MethodCall(parameters);
-                methodCall.SetMethodBody(methodBody);
-                _methodCalls.Add(key, methodCall);
-            }
-            else
-                methodCall.SetMethodBody(methodBody);
+            SetupMethod(key, parameters, call => call.SetMethodBody(methodBody));
         }
 
-        public void SetupReturn(Func<object> function, object[] parameters, object returnedValue)
+        public void SetupReturnedValue(Func<object> function, object[] parameters, object returnedValue)
+        {
+            var key = CreateMethodCallKey(function, parameters);
+            SetupMethod(key, parameters, call => call.SetReturnedValue(returnedValue));
+        }
+
+        private void SetupMethod(string key, IList<object> parameters, Action<MethodCall> setupAction)
         {
             MethodCall methodCall;
-            var key = CreateMethodCallKey(function, parameters);
             var found = _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
 
             if (!found)
             {
                 methodCall = new MethodCall(parameters);
-                methodCall.SetReturnedValue(returnedValue);
+                setupAction(methodCall);
                 _methodCalls.Add(key, methodCall);
             }
             else
-                methodCall.SetReturnedValue(returnedValue);
+                setupAction(methodCall);
         }
 
         public int GetMethodCallCount(Action action, object[] parameters)

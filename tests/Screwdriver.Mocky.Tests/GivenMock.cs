@@ -68,10 +68,21 @@ namespace Screwdriver.Mocking.Tests
         {
             var mock = Mock.Out<IMockableInterfaceA>();
             var called = false;
-            mock.Setup(mock.DoTheThing, new object[] { }, () => called = true);
+            mock.Setup(mock.DoTheThing, () => called = true);
             mock.DoTheThing();
 
             Assert.That(called, Is.EqualTo(true));
+        }
+
+        [Test]
+        public void WhenIMockAMethodWithASpecifiedBodyAndParameters_ThenTheMethodBodyIsExecuted()
+        {
+            var mock = Mock.Out<IMockableInterfaceA>();
+            var called = false;
+            mock.Setup(mock.DoTheThing, () => called = true, 123);
+            mock.DoTheThing(12345);
+
+            Assert.That(called, Is.EqualTo(false));
         }
     }
 }

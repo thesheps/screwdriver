@@ -15,15 +15,23 @@ namespace Screwdriver.Mocking.Proxies
     {
         public void CallMethod(string methodName, object[] parameters)
         {
-            if (!_methodCalls.ContainsKey(methodName))
-                _methodCalls.Add(methodName, new MethodCall(parameters));
+            MethodCall methodCall;
+            var key = GetKey(methodName, parameters);
+            var found = _methodCalls.TryGetValue(key, out methodCall);
 
-            _methodCalls[methodName].Execute();
+            if (!found)
+            {
+                methodCall = new MethodCall(parameters);
+                _methodCalls.Add(key, methodCall);
+            }
+
+            if (methodCall.Parameters.All(parameters.Contains))
+                methodCall.Execute();
         }
 
         public void SetupMethod(Action action, object[] parameters, Action methodBody)
         {
-            var key = action.Method.Name.Split('.').Last();
+            var key = GetKey(action.Method.Name.Split('.').Last(), parameters);
             if (!_methodCalls.ContainsKey(key))
                 _methodCalls.Add(key, new MethodCall(parameters, methodBody));
         }
@@ -31,10 +39,15 @@ namespace Screwdriver.Mocking.Proxies
         public int GetMethodCallCount(Action action, object[] parameters)
         {
             MethodCall methodCall;
-            var key = action.Method.Name.Split('.').Last();
+            var key = GetKey(action.Method.Name.Split('.').Last(), parameters);
             var found = _methodCalls.TryGetValue(key, out methodCall) && methodCall.Parameters.All(parameters.Contains);
 
             return found ? methodCall.Calls : 0;
+        }
+
+        private static string GetKey(string methodName, IEnumerable<object> parameters)
+        {
+            return $"{methodName}_{string.Join("_", parameters.Select(p => p.GetType().Name))}";
         }
 
         private class MethodCall

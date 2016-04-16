@@ -7,6 +7,7 @@ namespace Screwdriver.Mocking.Proxies
     public interface IObjectProxy
     {
         void CallMethod(string methodName, object[] parameters);
+        void SetupMethod(Action action, object[] parameters, Action methodBody);
         int GetMethodCallCount(Action action, object[] parameters);
     }
 
@@ -17,7 +18,14 @@ namespace Screwdriver.Mocking.Proxies
             if (!_methodCalls.ContainsKey(methodName))
                 _methodCalls.Add(methodName, new MethodCall(parameters));
 
-            _methodCalls[methodName].Calls++;
+            _methodCalls[methodName].Execute();
+        }
+
+        public void SetupMethod(Action action, object[] parameters, Action methodBody)
+        {
+            var key = action.Method.Name.Split('.').Last();
+            if (!_methodCalls.ContainsKey(key))
+                _methodCalls.Add(key, new MethodCall(parameters, methodBody));
         }
 
         public int GetMethodCallCount(Action action, object[] parameters)
@@ -32,12 +40,26 @@ namespace Screwdriver.Mocking.Proxies
         private class MethodCall
         {
             public IList<object> Parameters { get; }
-            public int Calls { get; set; }
+            public int Calls { get; private set; }
 
             public MethodCall(IList<object> parameters)
             {
                 Parameters = parameters;
             }
+
+            public MethodCall(IList<object> parameters, Action methodBody)
+            {
+                Parameters = parameters;
+                _methodBody = methodBody;
+            }
+
+            public void Execute()
+            {
+                Calls++;
+                _methodBody?.Invoke();
+            }
+
+            private readonly Action _methodBody;
         }
 
         private readonly IDictionary<string, MethodCall> _methodCalls = new Dictionary<string, MethodCall>();

@@ -14,5 +14,14 @@ namespace Screwdriver.Mocking
 
             return new MethodProxy(objectProxy, action);
         }
+
+        public static void Setup(this object obj, Action action, object[] arguments, Action methodBody)
+        {
+            var objectProxy = obj as IObjectProxy;
+            if (objectProxy == null)
+                throw new ProxyNotImplementedException(obj.GetType());
+
+            objectProxy.SetupMethod(action, arguments, methodBody);
+        }
     }
 }

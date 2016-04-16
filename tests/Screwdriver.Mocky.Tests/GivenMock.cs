@@ -62,5 +62,16 @@ namespace Screwdriver.Mocking.Tests
 
             Assert.That(mock.WasCalled(mock.DoTheThing).WithParameters(obj).Exactly(10), Is.EqualTo(true));
         }
+
+        [Test]
+        public void WhenIMockAMethodWithASpecifiedBody_ThenTheMethodBodyIsExecuted()
+        {
+            var mock = Mock.Out<IMockableInterfaceA>();
+            var called = false;
+            mock.Setup(mock.DoTheThing, new object[] { }, () => called = true);
+            mock.DoTheThing();
+
+            Assert.That(called, Is.EqualTo(true));
+        }
     }
 }

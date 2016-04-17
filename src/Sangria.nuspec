@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Sangria</id>
+    <version>$version$</version>
+    <title>Sangria</title>
+    <authors>Chris Shepherd</authors>
+    <owners>Chris Shepherd</owners>
+    <iconUrl>https://raw.githubusercontent.com/thesheps/screwdriver/master/src/sangria-nuget-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple http stubbing framework.</description>
+    <releaseNotes></releaseNotes>
+    <tags>unit testing fluent http stubbing mocking self-host</tags>
+  </metadata>
+
+  <files>
+    <file src="Sangria\bin\$configuration$\Sangria.dll" target="lib" />
+  </files>
+</package>

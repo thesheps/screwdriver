@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B2583FC6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{0F2DDCCB-BF58-4C9F-902F-E1FADF931711}"
 	ProjectSection(SolutionItems) = preProject
+		src\sangria-nuget-icon.png = src\sangria-nuget-icon.png
+		src\Sangria.nuspec = src\Sangria.nuspec
 		src\screwdriver-nuget-icon.png = src\screwdriver-nuget-icon.png
 		src\Screwdriver.nuspec = src\Screwdriver.nuspec
 		src\sidecar-nuget-icon.png = src\sidecar-nuget-icon.png
@@ -28,6 +30,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sidecar.Tests", "tests\Sidecar.Tests\Sidecar.Tests.csproj", "{820D191B-1D31-405C-B16E-E5D11B801D68}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spritz.Tests", "tests\Spritz.Tests\Spritz.Tests.csproj", "{6F07675D-E677-4AED-9F83-C47621D0768D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sangria", "src\Sangria\Sangria.csproj", "{D2B4B318-1FC2-4F30-8042-A587670D971D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sangria.Tests", "tests\Sangria.Tests\Sangria.Tests.csproj", "{F00E173E-3C2B-4AE5-8BDA-3BD0706326A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +65,14 @@ Global
 		{6F07675D-E677-4AED-9F83-C47621D0768D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F07675D-E677-4AED-9F83-C47621D0768D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F07675D-E677-4AED-9F83-C47621D0768D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2B4B318-1FC2-4F30-8042-A587670D971D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2B4B318-1FC2-4F30-8042-A587670D971D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2B4B318-1FC2-4F30-8042-A587670D971D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2B4B318-1FC2-4F30-8042-A587670D971D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F00E173E-3C2B-4AE5-8BDA-3BD0706326A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F00E173E-3C2B-4AE5-8BDA-3BD0706326A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F00E173E-3C2B-4AE5-8BDA-3BD0706326A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F00E173E-3C2B-4AE5-8BDA-3BD0706326A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,5 +84,7 @@ Global
 		{1FACBA4D-CFAE-4EEA-A990-14D1EAEE4EE9} = {1F7D5821-E63E-4609-A0AC-1BC8DAB7765B}
 		{820D191B-1D31-405C-B16E-E5D11B801D68} = {B2583FC6-7B98-4F75-95D1-97DEA4002F2D}
 		{6F07675D-E677-4AED-9F83-C47621D0768D} = {B2583FC6-7B98-4F75-95D1-97DEA4002F2D}
+		{D2B4B318-1FC2-4F30-8042-A587670D971D} = {1F7D5821-E63E-4609-A0AC-1BC8DAB7765B}
+		{F00E173E-3C2B-4AE5-8BDA-3BD0706326A1} = {B2583FC6-7B98-4F75-95D1-97DEA4002F2D}
 	EndGlobalSection
 EndGlobal

@@ -6,12 +6,7 @@ using Sangria.Resources;
 
 namespace Sangria
 {
-    public interface IPostStubConfiguration : IStubConfiguration
-    {
-        IPostStubConfiguration WithQueryString(string name, string value);
-    }
-
-    public class PostStubConfiguration : StubConfiguration, IPostStubConfiguration
+    public class PostStubConfiguration : StubConfiguration
     {
         public override HttpVerb HttpVerb => HttpVerb.Post;
 
@@ -20,7 +15,7 @@ namespace Sangria
         {
         }
 
-        public IPostStubConfiguration WithQueryString(string name, string value)
+        public PostStubConfiguration WithQueryString(string name, string value)
         {
             if (_queryStringParameters.ContainsKey(name))
                 throw new InvalidBindingException(string.Format(Errors.DuplicateQueryStringParameter, name));

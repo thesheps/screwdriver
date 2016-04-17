@@ -8,19 +8,19 @@ namespace Sangria
 {
     public interface IServer : IDisposable
     {
-        IList<IStubConfiguration> Configurations { get; }
-        IGetStubConfiguration OnGet(string resource);
-        IPostStubConfiguration OnPost(string resource);
+        IList<StubConfiguration> Configurations { get; }
+        GetStubConfiguration OnGet(string resource);
+        PostStubConfiguration OnPost(string resource);
         void Start();
     }
 
     public class Server : IServer
     {
-        public IList<IStubConfiguration> Configurations { get; }
+        public IList<StubConfiguration> Configurations { get; }
 
         public Server(int port)
         {
-            Configurations = new List<IStubConfiguration>();
+            Configurations = new List<StubConfiguration>();
             _listener = new HttpListener();
             _listener.Prefixes.Add($"http://*:{port}/");
         }
@@ -31,7 +31,7 @@ namespace Sangria
             _listener.BeginGetContext(ProcessRequest, _listener);
         }
 
-        public IGetStubConfiguration OnGet(string resource)
+        public GetStubConfiguration OnGet(string resource)
         {
             var stubConfiguration = new GetStubConfiguration(this, resource);
             Configurations.Add(stubConfiguration);
@@ -39,7 +39,7 @@ namespace Sangria
             return stubConfiguration;
         }
 
-        public IPostStubConfiguration OnPost(string resource)
+        public PostStubConfiguration OnPost(string resource)
         {
             var stubConfiguration = new PostStubConfiguration(this, resource);
             Configurations.Add(stubConfiguration);
@@ -68,7 +68,7 @@ namespace Sangria
 
             if (configurations.Any())
             {
-                var configuration = configurations.SingleOrDefault(c => c.MatchesRequest(context.Request)) ??
+                var configuration = configurations.SingleOrDefault(c => c.MatchesRequest(context.Request)) ?? 
                                     configurations.FirstOrDefault(c => c.IsFallback);
 
                 if (configuration != null)

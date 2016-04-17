@@ -6,12 +6,7 @@ using Sangria.Resources;
 
 namespace Sangria
 {
-    public interface IGetStubConfiguration : IStubConfiguration
-    {
-        IGetStubConfiguration WithQueryString(string name, string value);
-    }
-
-    public class GetStubConfiguration : StubConfiguration, IGetStubConfiguration
+    public class GetStubConfiguration : StubConfiguration
     {
         public override HttpVerb HttpVerb => HttpVerb.Get;
 
@@ -20,7 +15,7 @@ namespace Sangria
         {
         }
 
-        public IGetStubConfiguration WithQueryString(string name, string value)
+        public GetStubConfiguration WithQueryString(string name, string value)
         {
             if (_queryStringParameters.ContainsKey(name))
                 throw new InvalidBindingException(string.Format(Errors.DuplicateQueryStringParameter, name));

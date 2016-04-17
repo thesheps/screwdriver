@@ -5,7 +5,7 @@ using Sangria.Exceptions;
 
 namespace Sangria
 {
-    public abstract class StubConfiguration : IStubConfiguration
+    public abstract class StubConfiguration
     {
         public bool IsFallback { get; private set; }
         public string Resource { get; }
@@ -17,7 +17,7 @@ namespace Sangria
             Resource = resource;
         }
 
-        public IStubConfiguration Fallback()
+        public StubConfiguration Fallback()
         {
             if (_server.Configurations.Any(c => c.Resource.Equals(Resource, StringComparison.InvariantCultureIgnoreCase) && c.IsFallback))
                 throw new DuplicateFallbackException(Resource);

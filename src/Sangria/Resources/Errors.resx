@@ -120,4 +120,7 @@
   <data name="DuplicateBinding" xml:space="preserve">
     <value>Resource '{0}' has already been configured.</value>
   </data>
+  <data name="DuplicateQueryStringParameter" xml:space="preserve">
+    <value>The specified query string key '{0}' has already been registered for the binding.</value>
+  </data>
 </root>

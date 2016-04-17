@@ -1,9 +1,14 @@
 using System.Collections.Generic;
+using Sangria.Exceptions;
+using Sangria.Resources;
 
 namespace Sangria
 {
     public interface IStubConfiguration : IServer
     {
+        string Resource { get; }
+        StubbedResponse StubbedResponse { get; }
+        Dictionary<string, string> QueryStringParameters { get; }
         IStubConfiguration WithQueryString(string name, string value);
     }
 
@@ -11,13 +16,14 @@ namespace Sangria
     {
         public string Resource { get; }
         public StubbedResponse StubbedResponse { get; }
-        public Dictionary<string, string> QueryStringParameters = new Dictionary<string, string>(); 
+        public Dictionary<string, string> QueryStringParameters { get; }
 
         public StubConfiguration(IServer server, string resource, StubbedResponse stubbedResponse)
         {
             _server = server;
             Resource = resource;
             StubbedResponse = stubbedResponse;
+            QueryStringParameters = new Dictionary<string, string>();
         }
 
         public void Start()
@@ -32,6 +38,9 @@ namespace Sangria
 
         public IStubConfiguration WithQueryString(string name, string value)
         {
+            if (QueryStringParameters.ContainsKey(name))
+                throw new InvalidBindingException(string.Format(Errors.DuplicateQueryStringParameter, name));
+
             QueryStringParameters.Add(name, value);
             return this;
         }

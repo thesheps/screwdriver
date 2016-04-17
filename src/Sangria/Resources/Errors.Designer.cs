@@ -68,5 +68,14 @@ namespace Sangria.Resources {
                 return ResourceManager.GetString("DuplicateBinding", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified query string key &apos;{0}&apos; has already been registered for the binding..
+        /// </summary>
+        internal static string DuplicateQueryStringParameter {
+            get {
+                return ResourceManager.GetString("DuplicateQueryStringParameter", resourceCulture);
+            }
+        }
     }
 }

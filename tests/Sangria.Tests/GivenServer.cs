@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using NUnit.Framework;
 using RestSharp;
+using Sangria.Exceptions;
 
 namespace Sangria.Tests
 {
@@ -103,25 +104,44 @@ namespace Sangria.Tests
             }
         }
 
-        [Test]
-        public void WhenICreateABindingWithASpecificQueryString_AndMakeARequestWithQueryString_ThenConfiguredResponseIsReturned()
+        [TestCase("1", HttpStatusCode.OK)]
+        [TestCase("2", HttpStatusCode.NotFound)]
+        [TestCase("3", HttpStatusCode.Ambiguous)]
+        public void WhenICreateABindingWithASpecificQueryString_AndMakeARequestWithQueryString_ThenConfiguredResponseIsReturned(string id, HttpStatusCode statusCode)
         {
             const int port = 8080;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
                 .OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse))
-                .WithQueryString("id", "1"))
+                   .WithQueryString("id", "1")
+                .OnGet("Test", new StubbedResponse(HttpStatusCode.Ambiguous, expectedResponse))
+                   .WithQueryString("id", "3"))
             {
                 server.Start();
 
                 var client = new RestClient($"http://localhost:{port}");
                 var restRequest = new RestRequest("test");
-                restRequest.AddQueryParameter("id", "1");
+                restRequest.AddQueryParameter("id", id);
 
                 var response = client.Get(restRequest);
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(response.StatusCode, Is.EqualTo(statusCode));
             }
+        }
+
+        [Test]
+        public void WhenITryToRegisterDuplicateQueryString_ThenDuplicateBindingExceptionIsThrown()
+        {
+            const int port = 8080;
+            const string expectedResponse = "<html><body>Great success!</body></html>";
+
+            Assert.Throws<InvalidBindingException>(() =>
+            {
+                new Server(port)
+                    .OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse))
+                    .WithQueryString("id", "1")
+                    .WithQueryString("id", "2");
+            });
         }
     }
 }

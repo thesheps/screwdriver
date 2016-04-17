@@ -13,8 +13,10 @@ namespace Sangria.Tests
             const int port = 1234;
             var portIsOpened = false;
 
-            using (new Server(port))
+            using (var server = new Server(port))
             {
+                server.Start();
+
                 using (var client = new TcpClient())
                 {
                     try
@@ -37,8 +39,10 @@ namespace Sangria.Tests
         {
             const int port = 8080;
 
-            using (new Server(port))
+            using (var server = new Server(port))
             {
+                server.Start();
+
                 var client = new RestClient($"http://localhost:{port}");
                 var response = client.Get(new RestRequest("test"));
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
@@ -50,14 +54,33 @@ namespace Sangria.Tests
         {
             const int port = 8080;
 
-            using (new Server(port))
+            using (var server = new Server(port))
             {
+                server.Start();
+
                 var client = new RestClient($"http://localhost:{port}");
                 var response1 = client.Get(new RestRequest("test"));
                 var response2 = client.Get(new RestRequest("test"));
 
                 Assert.That(response1.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
                 Assert.That(response2.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            }
+        }
+
+        [Test]
+        public void WhenIRequestAKnownResource_ThenDefaultResponseIsReturned()
+        {
+            const int port = 8080;
+            const string expectedResponse = "<html><body>Great success!</body></html>";
+
+            using (var server = new Server(port).OnGet("Test", expectedResponse))
+            {
+                server.Start();
+
+                var client = new RestClient($"http://localhost:{port}");
+                var response = client.Get(new RestRequest("test"));
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(response.Content, Is.EqualTo(expectedResponse));
             }
         }
     }

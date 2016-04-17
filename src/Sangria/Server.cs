@@ -1,31 +1,40 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using System.Threading;
+using Sangria.Exceptions;
 
 namespace Sangria
 {
-    public class Server : IDisposable
+    public interface IServer : IDisposable
+    {
+        void Start();
+        IServer OnGet(string resource, string response);
+    }
+
+    public class Server : IServer
     {
         public Server(int port)
         {
             _listener = new HttpListener();
             _listener.Prefixes.Add($"http://*:{port}/");
+        }
+
+        public void Start()
+        {
             _listener.Start();
             _listener.BeginGetContext(ProcessRequest, _listener);
         }
 
-        private static void ProcessRequest(IAsyncResult result)
+        public IServer OnGet(string resource, string response)
         {
-            var listener = (HttpListener)result.AsyncState;
-            listener.BeginGetContext(ProcessRequest, listener);
+            var key = resource.ToLower();
+            if (_responses.ContainsKey(key))
+                throw new DuplicateBindingException(key);
 
-            var context = listener.EndGetContext(result);
-            var buffer = Encoding.UTF8.GetBytes("<html><body>404!</body></html>");
+            _responses.Add(key, response);
 
-            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-            context.Response.OutputStream.Write(buffer, 0, buffer.Length);
-            context.Response.Close();
+            return this;
         }
 
         public void Dispose()
@@ -33,6 +42,31 @@ namespace Sangria
             _listener.Stop();
         }
 
+        private void ProcessRequest(IAsyncResult result)
+        {
+            var listener = (HttpListener)result.AsyncState;
+            listener.BeginGetContext(ProcessRequest, listener);
+
+            var context = listener.EndGetContext(result);
+            string response;
+            byte[] buffer;
+
+            if (_responses.TryGetValue(context.Request.Url.LocalPath.Trim('/').ToLower(), out response))
+            {
+                buffer = Encoding.UTF8.GetBytes(response);
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+            }
+            else
+            {
+                buffer = Encoding.UTF8.GetBytes("<html><body>404!</body></html>");
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            }
+
+            context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+            context.Response.Close();
+        }
+
+        private readonly Dictionary<string, string> _responses = new Dictionary<string, string>();
         private readonly HttpListener _listener;
     }
 }

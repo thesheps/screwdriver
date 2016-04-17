@@ -51,10 +51,10 @@ namespace Sidecar
                 result = this;
 
                 if (propertyInfo == null)
-                    throw new UnknownPropertyException();
+                    throw new UnknownPropertyException(binder.Name);
 
                 if (propertyInfo.PropertyType != args[0].GetType())
-                    throw new UnknownPropertyException();
+                    throw new UnknownPropertyException(binder.Name);
 
                 propertyInfo.SetValue(Result, args[0]);
 

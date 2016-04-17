@@ -73,7 +73,7 @@ namespace Sangria.Tests
             const int port = 8080;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
-            using (var server = new Server(port).OnGet("Test", expectedResponse))
+            using (var server = new Server(port).OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse)))
             {
                 server.Start();
 

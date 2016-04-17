@@ -9,7 +9,7 @@ namespace Sangria
     public interface IServer : IDisposable
     {
         void Start();
-        IServer OnGet(string resource, string response);
+        IServer OnGet(string resource, StubbedResponse stubbedResponse);
     }
 
     public class Server : IServer
@@ -26,13 +26,13 @@ namespace Sangria
             _listener.BeginGetContext(ProcessRequest, _listener);
         }
 
-        public IServer OnGet(string resource, string response)
+        public IServer OnGet(string resource, StubbedResponse stubbedResponse)
         {
             var key = resource.ToLower();
             if (_responses.ContainsKey(key))
                 throw new DuplicateBindingException(key);
 
-            _responses.Add(key, response);
+            _responses.Add(key, stubbedResponse);
 
             return this;
         }
@@ -48,12 +48,12 @@ namespace Sangria
             listener.BeginGetContext(ProcessRequest, listener);
 
             var context = listener.EndGetContext(result);
-            string response;
+            StubbedResponse response;
             byte[] buffer;
 
             if (_responses.TryGetValue(context.Request.Url.LocalPath.Trim('/').ToLower(), out response))
             {
-                buffer = Encoding.UTF8.GetBytes(response);
+                buffer = Encoding.UTF8.GetBytes(response.Response);
                 context.Response.StatusCode = (int)HttpStatusCode.OK;
             }
             else
@@ -66,7 +66,7 @@ namespace Sangria
             context.Response.Close();
         }
 
-        private readonly Dictionary<string, string> _responses = new Dictionary<string, string>();
+        private readonly Dictionary<string, StubbedResponse> _responses = new Dictionary<string, StubbedResponse>();
         private readonly HttpListener _listener;
     }
 }

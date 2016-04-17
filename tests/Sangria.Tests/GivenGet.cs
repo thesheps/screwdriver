@@ -6,7 +6,7 @@ using Sangria.Exceptions;
 
 namespace Sangria.Tests
 {
-    public class GivenServer
+    public class GivenGet
     {
         [Test]
         public void WhenIInitialiseAServerWithAGivenPort_ThenTheSpecifiedPortIsOpened()
@@ -36,7 +36,7 @@ namespace Sangria.Tests
         }
 
         [Test]
-        public void WhenIRequestAResourceWithNoPredefinedBindings_Then404IsReturned()
+        public void WhenIGetAResourceWithNoPredefinedBindings_Then404IsReturned()
         {
             const int port = 8080;
 
@@ -76,7 +76,7 @@ namespace Sangria.Tests
 
             using (var server = new Server(port)
                 .OnGet("Test")
-                .Returns(new StubbedResponse(HttpStatusCode.OK, expectedResponse)))
+                .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse)))
             {
                 server.Start();
 
@@ -96,7 +96,7 @@ namespace Sangria.Tests
             using (var server = new Server(port)
                 .OnGet("Test")
                 .WithQueryString("id", "1")
-                .Returns(new StubbedResponse(HttpStatusCode.OK, expectedResponse)))
+                .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse)))
             {
                 server.Start();
 
@@ -118,10 +118,10 @@ namespace Sangria.Tests
             using (var server = new Server(port)
                 .OnGet("Test")
                    .WithQueryString("id", "1")
-                   .Returns(new StubbedResponse(HttpStatusCode.OK, expectedResponse))
+                   .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse))
                 .OnGet("Test")
                    .WithQueryString("id", "3")
-                   .Returns(new StubbedResponse(HttpStatusCode.Ambiguous, expectedResponse)))
+                   .Returns(new StubResponse(HttpStatusCode.Ambiguous, expectedResponse)))
             {
                 server.Start();
 
@@ -144,7 +144,7 @@ namespace Sangria.Tests
                 .OnGet("Test")
                    .WithQueryString("firstName", "bob")
                    .WithQueryString("surname", "marley")
-                   .Returns(new StubbedResponse(HttpStatusCode.OK, expectedResponse)))
+                   .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse)))
             {
                 server.Start();
 
@@ -168,7 +168,7 @@ namespace Sangria.Tests
                     .WithQueryString("firstName", "bob")
                     .WithQueryString("surname", "marley")
                     .Fallback()
-                        .Returns(new StubbedResponse(HttpStatusCode.OK, expectedFallback)))
+                        .Returns(new StubResponse(HttpStatusCode.OK, expectedFallback)))
             {
                 server.Start();
 

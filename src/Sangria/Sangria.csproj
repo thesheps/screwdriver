@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Exceptions\DuplicateFallbackException.cs" />
     <Compile Include="Exceptions\InvalidBindingException.cs" />
+    <Compile Include="HttpVerb.cs" />
     <Compile Include="Resources\Html.Designer.cs">
       <DependentUpon>Html.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -55,7 +56,7 @@
       <DependentUpon>Errors.resx</DependentUpon>
     </Compile>
     <Compile Include="Server.cs" />
-    <Compile Include="StubbedResponse.cs" />
+    <Compile Include="StubResponse.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

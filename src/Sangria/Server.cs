@@ -10,6 +10,7 @@ namespace Sangria
     {
         IList<IStubConfiguration> Configurations { get; }
         IStubConfiguration OnGet(string resource);
+        IStubConfiguration OnPost(string resource);
         void Start();
     }
 
@@ -32,7 +33,15 @@ namespace Sangria
 
         public IStubConfiguration OnGet(string resource)
         {
-            var stubConfiguration = new StubConfiguration(this, resource);
+            var stubConfiguration = new StubConfiguration(this, HttpVerb.Get, resource);
+            Configurations.Add(stubConfiguration);
+
+            return stubConfiguration;
+        }
+
+        public IStubConfiguration OnPost(string resource)
+        {
+            var stubConfiguration = new StubConfiguration(this, HttpVerb.Post, resource);
             Configurations.Add(stubConfiguration);
 
             return stubConfiguration;
@@ -54,8 +63,8 @@ namespace Sangria
 
             var resource = context.Request.Url.LocalPath.Trim('/');
             var configurations = Configurations
-                .Where(c => c.Resource.Equals(resource, StringComparison.InvariantCultureIgnoreCase))
-                .ToList();
+                .Where(c => c.Resource.Equals(resource, StringComparison.InvariantCultureIgnoreCase) &&
+                            c.HttpVerb.ToString().Equals(context.Request.HttpMethod, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             if (configurations.Any())
             {

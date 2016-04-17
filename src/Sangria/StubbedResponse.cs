@@ -5,12 +5,12 @@ namespace Sangria
     public class StubbedResponse
     {
         public HttpStatusCode StatusCode { get; }
-        public string Response { get; }
+        public string Body { get; }
 
-        public StubbedResponse(HttpStatusCode statusCode, string response)
+        public StubbedResponse(HttpStatusCode statusCode, string body)
         {
             StatusCode = statusCode;
-            Response = response;
+            Body = body;
         }
     }
 }

@@ -68,7 +68,7 @@ namespace Sangria.Tests
         }
 
         [Test]
-        public void WhenIRequestAKnownResource_ThenDefaultResponseIsReturned()
+        public void WhenIRequestAKnownResource_ThenConfiguredResponseIsReturned()
         {
             const int port = 8080;
             const string expectedResponse = "<html><body>Great success!</body></html>";
@@ -81,6 +81,46 @@ namespace Sangria.Tests
                 var response = client.Get(new RestRequest("test"));
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                 Assert.That(response.Content, Is.EqualTo(expectedResponse));
+            }
+        }
+
+        [Test]
+        public void WhenICreateABindingWithASpecificQueryString_AndMakeARequestWithNoQueryString_Then404()
+        {
+            const int port = 8080;
+            const string expectedResponse = "<html><body>Great success!</body></html>";
+
+            using (var server = new Server(port)
+                .OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse))
+                .WithQueryString("id", "1"))
+            {
+                server.Start();
+
+                var client = new RestClient($"http://localhost:{port}");
+                var restRequest = new RestRequest("test");
+                var response = client.Get(restRequest);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            }
+        }
+
+        [Test]
+        public void WhenICreateABindingWithASpecificQueryString_AndMakeARequestWithQueryString_ThenConfiguredResponseIsReturned()
+        {
+            const int port = 8080;
+            const string expectedResponse = "<html><body>Great success!</body></html>";
+
+            using (var server = new Server(port)
+                .OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse))
+                .WithQueryString("id", "1"))
+            {
+                server.Start();
+
+                var client = new RestClient($"http://localhost:{port}");
+                var restRequest = new RestRequest("test");
+                restRequest.AddQueryParameter("id", "1");
+
+                var response = client.Get(restRequest);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
         }
     }

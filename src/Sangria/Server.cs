@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
-using Sangria.Exceptions;
 
 namespace Sangria
 {
     public interface IServer : IDisposable
     {
         void Start();
-        IServer OnGet(string resource, StubbedResponse stubbedResponse);
+        IStubConfiguration OnGet(string resource, StubbedResponse stubbedResponse);
     }
 
     public class Server : IServer
@@ -26,15 +26,14 @@ namespace Sangria
             _listener.BeginGetContext(ProcessRequest, _listener);
         }
 
-        public IServer OnGet(string resource, StubbedResponse stubbedResponse)
+        public IStubConfiguration OnGet(string resource, StubbedResponse stubbedResponse)
         {
             var key = resource.ToLower();
-            if (_responses.ContainsKey(key))
-                throw new DuplicateBindingException(key);
+            var stubConfiguration = new StubConfiguration(this, key, stubbedResponse);
 
-            _responses.Add(key, stubbedResponse);
+            _configurations.Add(stubConfiguration);
 
-            return this;
+            return stubConfiguration;
         }
 
         public void Dispose()
@@ -48,13 +47,17 @@ namespace Sangria
             listener.BeginGetContext(ProcessRequest, listener);
 
             var context = listener.EndGetContext(result);
-            StubbedResponse response;
             byte[] buffer;
 
-            if (_responses.TryGetValue(context.Request.Url.LocalPath.Trim('/').ToLower(), out response))
+            var resource = context.Request.Url.LocalPath.Trim('/');
+            var configuration = _configurations
+                .SingleOrDefault(c => c.Resource.Equals(resource, StringComparison.InvariantCultureIgnoreCase) &&
+                                      c.QueryStringParameters.All(q => context.Request.QueryString[q.Key] == q.Value));
+
+            if (configuration != null)
             {
-                buffer = Encoding.UTF8.GetBytes(response.Response);
-                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                buffer = Encoding.UTF8.GetBytes(configuration.StubbedResponse.Body);
+                context.Response.StatusCode = (int)configuration.StubbedResponse.StatusCode;
             }
             else
             {
@@ -66,7 +69,7 @@ namespace Sangria
             context.Response.Close();
         }
 
-        private readonly Dictionary<string, StubbedResponse> _responses = new Dictionary<string, StubbedResponse>();
+        private readonly IList<StubConfiguration> _configurations = new List<StubConfiguration>();
         private readonly HttpListener _listener;
     }
 }

@@ -9,8 +9,8 @@ namespace Sangria
     public interface IServer : IDisposable
     {
         IList<IStubConfiguration> Configurations { get; }
-        IStubConfiguration OnGet(string resource);
-        IStubConfiguration OnPost(string resource);
+        IGetStubConfiguration OnGet(string resource);
+        IPostStubConfiguration OnPost(string resource);
         void Start();
     }
 
@@ -31,17 +31,17 @@ namespace Sangria
             _listener.BeginGetContext(ProcessRequest, _listener);
         }
 
-        public IStubConfiguration OnGet(string resource)
+        public IGetStubConfiguration OnGet(string resource)
         {
-            var stubConfiguration = new StubConfiguration(this, HttpVerb.Get, resource);
+            var stubConfiguration = new GetStubConfiguration(this, resource);
             Configurations.Add(stubConfiguration);
 
             return stubConfiguration;
         }
 
-        public IStubConfiguration OnPost(string resource)
+        public IPostStubConfiguration OnPost(string resource)
         {
-            var stubConfiguration = new StubConfiguration(this, HttpVerb.Post, resource);
+            var stubConfiguration = new PostStubConfiguration(this, resource);
             Configurations.Add(stubConfiguration);
 
             return stubConfiguration;
@@ -68,7 +68,7 @@ namespace Sangria
 
             if (configurations.Any())
             {
-                var configuration = configurations.SingleOrDefault(c => c.QueryStringParameters.All(q => context.Request.QueryString[q.Key] == q.Value)) ??
+                var configuration = configurations.SingleOrDefault(c => c.MatchesRequest(context.Request)) ??
                                     configurations.FirstOrDefault(c => c.IsFallback);
 
                 if (configuration != null)

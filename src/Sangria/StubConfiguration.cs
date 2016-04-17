@@ -10,19 +10,19 @@ namespace Sangria
         StubbedResponse StubbedResponse { get; }
         Dictionary<string, string> QueryStringParameters { get; }
         IStubConfiguration WithQueryString(string name, string value);
+        IServer Returns(StubbedResponse response);
     }
 
     public class StubConfiguration : IStubConfiguration
     {
         public string Resource { get; }
-        public StubbedResponse StubbedResponse { get; }
+        public StubbedResponse StubbedResponse { get; private set; }
         public Dictionary<string, string> QueryStringParameters { get; }
 
-        public StubConfiguration(IServer server, string resource, StubbedResponse stubbedResponse)
+        public StubConfiguration(IServer server, string resource)
         {
             _server = server;
             Resource = resource;
-            StubbedResponse = stubbedResponse;
             QueryStringParameters = new Dictionary<string, string>();
         }
 
@@ -31,9 +31,9 @@ namespace Sangria
             _server.Start();
         }
 
-        public IStubConfiguration OnGet(string resource, StubbedResponse stubbedResponse)
+        public IStubConfiguration OnGet(string resource)
         {
-            return _server.OnGet(resource, stubbedResponse);
+            return _server.OnGet(resource);
         }
 
         public IStubConfiguration WithQueryString(string name, string value)
@@ -43,6 +43,12 @@ namespace Sangria
 
             QueryStringParameters.Add(name, value);
             return this;
+        }
+
+        public IServer Returns(StubbedResponse response)
+        {
+            StubbedResponse = response;
+            return _server;
         }
 
         public void Dispose()

@@ -74,7 +74,9 @@ namespace Sangria.Tests
             const int port = 8080;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
-            using (var server = new Server(port).OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse)))
+            using (var server = new Server(port)
+                .OnGet("Test")
+                .Returns(new StubbedResponse(HttpStatusCode.OK, expectedResponse)))
             {
                 server.Start();
 
@@ -92,8 +94,9 @@ namespace Sangria.Tests
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
-                .OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse))
-                .WithQueryString("id", "1"))
+                .OnGet("Test")
+                .WithQueryString("id", "1")
+                .Returns(new StubbedResponse(HttpStatusCode.OK, expectedResponse)))
             {
                 server.Start();
 
@@ -113,10 +116,12 @@ namespace Sangria.Tests
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
-                .OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse))
+                .OnGet("Test")
                    .WithQueryString("id", "1")
-                .OnGet("Test", new StubbedResponse(HttpStatusCode.Ambiguous, expectedResponse))
-                   .WithQueryString("id", "3"))
+                   .Returns(new StubbedResponse(HttpStatusCode.OK, expectedResponse))
+                .OnGet("Test")
+                   .WithQueryString("id", "3")
+                   .Returns(new StubbedResponse(HttpStatusCode.Ambiguous, expectedResponse)))
             {
                 server.Start();
 
@@ -133,12 +138,11 @@ namespace Sangria.Tests
         public void WhenITryToRegisterDuplicateQueryString_ThenDuplicateBindingExceptionIsThrown()
         {
             const int port = 8080;
-            const string expectedResponse = "<html><body>Great success!</body></html>";
 
             Assert.Throws<InvalidBindingException>(() =>
             {
                 new Server(port)
-                    .OnGet("Test", new StubbedResponse(HttpStatusCode.OK, expectedResponse))
+                    .OnGet("Test")
                     .WithQueryString("id", "1")
                     .WithQueryString("id", "2");
             });

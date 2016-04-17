@@ -9,7 +9,7 @@ namespace Sangria
     public interface IServer : IDisposable
     {
         void Start();
-        IStubConfiguration OnGet(string resource, StubbedResponse stubbedResponse);
+        IStubConfiguration OnGet(string resource);
     }
 
     public class Server : IServer
@@ -26,10 +26,10 @@ namespace Sangria
             _listener.BeginGetContext(ProcessRequest, _listener);
         }
 
-        public IStubConfiguration OnGet(string resource, StubbedResponse stubbedResponse)
+        public IStubConfiguration OnGet(string resource)
         {
             var key = resource.ToLower();
-            var stubConfiguration = new StubConfiguration(this, key, stubbedResponse);
+            var stubConfiguration = new StubConfiguration(this, key);
 
             _configurations.Add(stubConfiguration);
 

@@ -135,6 +135,54 @@ namespace Sangria.Tests
         }
 
         [Test]
+        public void WhenICreateABindingWithASpecificQueryString_AndMakeARequestWithIncorrectQueryString_Then404()
+        {
+            const int port = 8080;
+            const string expectedResponse = "<html><body>Great success!</body></html>";
+
+            using (var server = new Server(port)
+                .OnGet("Test")
+                   .WithQueryString("firstName", "bob")
+                   .WithQueryString("surname", "marley")
+                   .Returns(new StubbedResponse(HttpStatusCode.OK, expectedResponse)))
+            {
+                server.Start();
+
+                var client = new RestClient($"http://localhost:{port}");
+                var restRequest = new RestRequest("test");
+                restRequest.AddQueryParameter("firstName", "bob");
+
+                var response = client.Get(restRequest);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            }
+        }
+
+        [Test]
+        public void WhenICreateABindingForASpecificQueryStringAndSpecifyFallback_AndMakeARequestWithIncorrectQueryString_ThenBackupIsUsed()
+        {
+            const int port = 8080;
+            const string expectedFallback = "<html><body>Fallback!</body></html>";
+
+            using (var server = new Server(port)
+                .OnGet("Test")
+                    .WithQueryString("firstName", "bob")
+                    .WithQueryString("surname", "marley")
+                    .Fallback()
+                        .Returns(new StubbedResponse(HttpStatusCode.OK, expectedFallback)))
+            {
+                server.Start();
+
+                var client = new RestClient($"http://localhost:{port}");
+                var restRequest = new RestRequest("test");
+                restRequest.AddQueryParameter("firstName", "bob");
+
+                var response = client.Get(restRequest);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(response.Content, Is.EqualTo(expectedFallback));
+            }
+        }
+
+        [Test]
         public void WhenITryToRegisterDuplicateQueryString_ThenDuplicateBindingExceptionIsThrown()
         {
             const int port = 8080;
@@ -143,8 +191,8 @@ namespace Sangria.Tests
             {
                 new Server(port)
                     .OnGet("Test")
-                    .WithQueryString("id", "1")
-                    .WithQueryString("id", "2");
+                        .WithQueryString("id", "1")
+                        .WithQueryString("id", "2");
             });
         }
     }

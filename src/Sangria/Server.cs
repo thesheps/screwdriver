@@ -8,14 +8,18 @@ namespace Sangria
 {
     public interface IServer : IDisposable
     {
-        void Start();
+        IList<IStubConfiguration> Configurations { get; }
         IStubConfiguration OnGet(string resource);
+        void Start();
     }
 
     public class Server : IServer
     {
+        public IList<IStubConfiguration> Configurations { get; }
+
         public Server(int port)
         {
+            Configurations = new List<IStubConfiguration>();
             _listener = new HttpListener();
             _listener.Prefixes.Add($"http://*:{port}/");
         }
@@ -28,10 +32,8 @@ namespace Sangria
 
         public IStubConfiguration OnGet(string resource)
         {
-            var key = resource.ToLower();
-            var stubConfiguration = new StubConfiguration(this, key);
-
-            _configurations.Add(stubConfiguration);
+            var stubConfiguration = new StubConfiguration(this, resource);
+            Configurations.Add(stubConfiguration);
 
             return stubConfiguration;
         }
@@ -46,30 +48,31 @@ namespace Sangria
             var listener = (HttpListener)result.AsyncState;
             listener.BeginGetContext(ProcessRequest, listener);
 
+            var buffer = Encoding.UTF8.GetBytes(Resources.Html.MissingStub);
             var context = listener.EndGetContext(result);
-            byte[] buffer;
+            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
             var resource = context.Request.Url.LocalPath.Trim('/');
-            var configuration = _configurations
-                .SingleOrDefault(c => c.Resource.Equals(resource, StringComparison.InvariantCultureIgnoreCase) &&
-                                      c.QueryStringParameters.All(q => context.Request.QueryString[q.Key] == q.Value));
+            var configurations = Configurations
+                .Where(c => c.Resource.Equals(resource, StringComparison.InvariantCultureIgnoreCase))
+                .ToList();
 
-            if (configuration != null)
+            if (configurations.Any())
             {
-                buffer = Encoding.UTF8.GetBytes(configuration.StubbedResponse.Body);
-                context.Response.StatusCode = (int)configuration.StubbedResponse.StatusCode;
-            }
-            else
-            {
-                buffer = Encoding.UTF8.GetBytes("<html><body>404!</body></html>");
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                var configuration = configurations.SingleOrDefault(c => c.QueryStringParameters.All(q => context.Request.QueryString[q.Key] == q.Value)) ??
+                                    configurations.FirstOrDefault(c => c.IsFallback);
+
+                if (configuration != null)
+                {
+                    buffer = Encoding.UTF8.GetBytes(configuration.StubbedResponse.Body);
+                    context.Response.StatusCode = (int)configuration.StubbedResponse.StatusCode;
+                }
             }
 
             context.Response.OutputStream.Write(buffer, 0, buffer.Length);
             context.Response.Close();
         }
 
-        private readonly IList<StubConfiguration> _configurations = new List<StubConfiguration>();
         private readonly HttpListener _listener;
     }
 }

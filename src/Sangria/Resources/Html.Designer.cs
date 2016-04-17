@@ -22,14 +22,14 @@ namespace Sangria.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Errors {
+    internal class Html {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Errors() {
+        internal Html() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Sangria.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sangria.Resources.Errors", typeof(Errors).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sangria.Resources.Html", typeof(Html).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,11 @@ namespace Sangria.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A fallback has already been specified for resource &apos;{0}&apos;..
+        ///   Looks up a localized string similar to &lt;html&gt;&lt;body&gt;404!&lt;/body&gt;&lt;/html&gt;.
         /// </summary>
-        internal static string DuplicateFallback {
+        internal static string MissingStub {
             get {
-                return ResourceManager.GetString("DuplicateFallback", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified query string key &apos;{0}&apos; has already been registered for the binding..
-        /// </summary>
-        internal static string DuplicateQueryStringParameter {
-            get {
-                return ResourceManager.GetString("DuplicateQueryStringParameter", resourceCulture);
+                return ResourceManager.GetString("MissingStub", resourceCulture);
             }
         }
     }

@@ -130,7 +130,7 @@ namespace Sangria.Tests
         }
 
         [Test]
-        public void WhenICreateABindingForASpecificQueryStringAndSpecifyFallback_AndMakeAPostRequestWithIncorrectQueryString_ThenBackupIsUsed()
+        public void WhenICreateABindingForASpecificQueryStringAndSpecifyFallback_AndMakeAPostRequestWithIncorrectQueryString_ThenFallbackIsUsed()
         {
             const int port = 8080;
             const string expectedFallback = "<html><body>Fallback!</body></html>";
@@ -151,6 +151,30 @@ namespace Sangria.Tests
                 var response = client.Post(restRequest);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                 Assert.That(response.Content, Is.EqualTo(expectedFallback));
+            }
+        }
+
+        [Test]
+        public void WhenICreateABindingForSpecificPostBody_AndMakePostRequestWithCorrectPostData_ThenStubIsUsed()
+        {
+            const int port = 8080;
+            const string expectedResponse = "<html><body>Success!</body></html>";
+            const string postData = "Hello World.";
+
+            using (var server = new Server(port)
+                .OnPost("Test")
+                    .WithBody(postData)
+                    .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse)))
+            {
+                server.Start();
+
+                var client = new RestClient($"http://localhost:{port}");
+                var restRequest = new RestRequest("test");
+                restRequest.AddParameter("text/json", postData, ParameterType.RequestBody);
+
+                var response = client.Post(restRequest);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(response.Content, Is.EqualTo(expectedResponse));
             }
         }
 

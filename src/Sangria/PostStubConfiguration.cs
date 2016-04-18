@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using Sangria.Exceptions;
@@ -10,6 +11,7 @@ namespace Sangria
     public interface IPostStubConfiguration : IStubConfiguration
     {
         IPostStubConfiguration WithQueryString(string name, string value);
+        IPostStubConfiguration WithBody(string body);
     }
 
     public class PostStubConfiguration : IPostStubConfiguration
@@ -51,12 +53,22 @@ namespace Sangria
             return this;
         }
 
+        public IPostStubConfiguration WithBody(string body)
+        {
+            _body = body;
+            return this;
+        }
+
         public bool MatchesRequest(HttpListenerRequest request)
         {
-            return _queryStringParameters.All(q => request.QueryString[q.Key] == q.Value);
+            var reader = new StreamReader(request.InputStream);
+            var body = reader.ReadToEnd();
+
+            return _queryStringParameters.All(q => request.QueryString[q.Key] == q.Value) && (_body == null || _body.Equals(body));
         }
 
         private readonly Dictionary<string, string> _queryStringParameters = new Dictionary<string, string>();
         private readonly IServer _server;
+        private string _body;
     }
 }

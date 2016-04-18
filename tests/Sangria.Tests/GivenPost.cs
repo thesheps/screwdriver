@@ -179,7 +179,32 @@ namespace Sangria.Tests
         }
 
         [Test]
-        public void WhenITryToRegisterDuplicateQueryStringAndMakePostRequest_ThenDuplicateBindingExceptionIsThrown()
+        public void WhenICreateABindingForSpecificJsonBody_AndMakePostRequestWithCorrectJsonData_ThenStubIsUsed()
+        {
+            const int port = 8080;
+            const string expectedResponse = "<html><body>Success!</body></html>";
+
+            var json = new { FirstName = "Boby", Surname = "Marley" };
+
+            using (var server = new Server(port)
+                .OnPost("Test")
+                    .WithJson(json)
+                    .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse)))
+            {
+                server.Start();
+
+                var client = new RestClient($"http://localhost:{port}");
+                var restRequest = new RestRequest("test");
+                restRequest.AddJsonBody(json);
+
+                var response = client.Post(restRequest);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(response.Content, Is.EqualTo(expectedResponse));
+            }
+        }
+
+        [Test]
+        public void WhenITryToRegisterADuplicateQueryStringAndMakePostRequest_ThenDuplicateBindingExceptionIsThrown()
         {
             const int port = 8080;
 

@@ -8,19 +8,19 @@ namespace Sangria
 {
     public interface IServer : IDisposable
     {
-        IList<StubConfiguration> Configurations { get; }
-        GetStubConfiguration OnGet(string resource);
-        PostStubConfiguration OnPost(string resource);
+        IList<IStubConfiguration> Configurations { get; }
+        IGetStubConfiguration OnGet(string resource);
+        IPostStubConfiguration OnPost(string resource);
         void Start();
     }
 
     public class Server : IServer
     {
-        public IList<StubConfiguration> Configurations { get; }
+        public IList<IStubConfiguration> Configurations { get; }
 
         public Server(int port)
         {
-            Configurations = new List<StubConfiguration>();
+            Configurations = new List<IStubConfiguration>();
             _listener = new HttpListener();
             _listener.Prefixes.Add($"http://*:{port}/");
         }
@@ -31,7 +31,7 @@ namespace Sangria
             _listener.BeginGetContext(ProcessRequest, _listener);
         }
 
-        public GetStubConfiguration OnGet(string resource)
+        public IGetStubConfiguration OnGet(string resource)
         {
             var stubConfiguration = new GetStubConfiguration(this, resource);
             Configurations.Add(stubConfiguration);
@@ -39,7 +39,7 @@ namespace Sangria
             return stubConfiguration;
         }
 
-        public PostStubConfiguration OnPost(string resource)
+        public IPostStubConfiguration OnPost(string resource)
         {
             var stubConfiguration = new PostStubConfiguration(this, resource);
             Configurations.Add(stubConfiguration);

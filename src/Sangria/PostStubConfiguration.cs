@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using Newtonsoft.Json;
 using Sangria.Exceptions;
 using Sangria.Resources;
@@ -80,10 +81,32 @@ namespace Sangria
         private bool MatchesJsonBody(string json)
         {
             var obj = JsonConvert.DeserializeObject(json, _jsonBody.GetType());
-            var properties1 = _jsonBody.GetType().GetProperties();
-            var properties2 = obj.GetType().GetProperties();
+            return ObjectsAreEqual(obj, _jsonBody);
+        }
 
-            return properties1.All(p1 => properties2.SingleOrDefault(p2 => p2.Name == p1.Name && p2.GetValue(obj).Equals(p1.GetValue(_jsonBody))) != null);
+        private static bool ObjectsAreEqual(object o1, object o2)
+        {
+            var properties1 = o1.GetType().GetProperties();
+            var properties2 = o2.GetType().GetProperties();
+
+            return properties1.All(p1 => properties2.SingleOrDefault(p2 => PropertiesAreEqual(o1, o2, p1, p2)) != null);
+        }
+
+        private static bool PropertiesAreEqual(object o1, object o2, PropertyInfo p1, PropertyInfo p2)
+        {
+            var value1 = p1.GetValue(o1);
+            var value2 = p2.GetValue(o2);
+
+            if (p1.Name != p2.Name || p1.PropertyType != p2.PropertyType)
+                return false;
+
+            if (p1.PropertyType.GetInterface("ICollection") == null)
+                return value1.Equals(value2);
+
+            var c1 = (ICollection<object>)value1;
+            var c2 = (ICollection<object>)value2;
+
+            return c1.All(p => c2.Any(pr => ObjectsAreEqual(p, pr)));
         }
 
         private readonly Dictionary<string, string> _queryStringParameters = new Dictionary<string, string>();

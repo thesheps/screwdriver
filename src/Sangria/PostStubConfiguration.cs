@@ -89,29 +89,54 @@ namespace Sangria
             var properties1 = o1.GetType().GetProperties();
             var properties2 = o2.GetType().GetProperties();
 
-            return properties1.All(p1 => properties2.SingleOrDefault(p2 => PropertiesAreEqual(o1, o2, p1, p2)) != null);
+            return properties1.All(p1 => properties2.SingleOrDefault(p2 => PropertiesAreEqual(new Property(o1, p1), new Property(o2, p2))) != null);
         }
 
-        private static bool PropertiesAreEqual(object o1, object o2, PropertyInfo p1, PropertyInfo p2)
+        private static bool PropertiesAreEqual(Property property1, Property property2)
         {
-            var value1 = p1.GetValue(o1);
-            var value2 = p2.GetValue(o2);
-
-            if (p1.Name != p2.Name || p1.PropertyType != p2.PropertyType)
+            if (property1.Name != property2.Name || property1.Type != property2.Type)
                 return false;
 
-            if (p1.PropertyType.GetInterface("ICollection") == null)
+            var value1 = property1.GetValue();
+            var value2 = property2.GetValue();
+
+            if (!property1.IsCollection())
                 return value1.Equals(value2);
 
-            var c1 = (ICollection<object>)value1;
-            var c2 = (ICollection<object>)value2;
+            var collection1 = (ICollection<object>)value1;
+            var collection2 = (ICollection<object>)value2;
 
-            return c1.All(p => c2.Any(pr => ObjectsAreEqual(p, pr)));
+            return collection1.All(p1 => collection2.Any(p2 => ObjectsAreEqual(p1, p2)));
         }
 
         private readonly Dictionary<string, string> _queryStringParameters = new Dictionary<string, string>();
         private readonly IServer _server;
         private string _body;
         private object _jsonBody;
+
+        private class Property
+        {
+            public string Name => _propertyInfo.Name;
+            public Type Type => _propertyInfo.PropertyType;
+
+            public Property(object sourceObject, PropertyInfo propertyInfo)
+            {
+                _sourceObject = sourceObject;
+                _propertyInfo = propertyInfo;
+            }
+
+            public object GetValue()
+            {
+                return _propertyInfo.GetValue(_sourceObject);
+            }
+
+            public bool IsCollection()
+            {
+                return Type.GetInterface("ICollection") != null;
+            }
+
+            private readonly object _sourceObject;
+            private readonly PropertyInfo _propertyInfo;
+        }
     }
 }

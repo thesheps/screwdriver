@@ -12,7 +12,6 @@ namespace Sangria
 {
     public interface IPostStubConfiguration : IStubConfiguration
     {
-        IPostStubConfiguration WithQueryString(string name, string value);
         IPostStubConfiguration WithBody(string body);
         IPostStubConfiguration WithJson(object json);
     }
@@ -46,12 +45,22 @@ namespace Sangria
             return _server;
         }
 
-        public IPostStubConfiguration WithQueryString(string name, string value)
+        public IStubConfiguration WithQueryStringParameter(string name, string value)
         {
             if (_queryStringParameters.ContainsKey(name))
                 throw new InvalidBindingException(string.Format(Errors.DuplicateQueryStringParameter, name));
 
             _queryStringParameters.Add(name, value);
+
+            return this;
+        }
+
+        public IStubConfiguration WithHeader(HttpRequestHeader header, string value)
+        {
+            if (_headers.ContainsKey(header.ToString()))
+                throw new InvalidBindingException(string.Format(Errors.DuplicateHeaderParameter, header));
+
+            _headers.Add(header.ToString(), value);
 
             return this;
         }
@@ -74,6 +83,7 @@ namespace Sangria
             var body = reader.ReadToEnd();
 
             return _queryStringParameters.All(q => request.QueryString[q.Key] == q.Value)
+                   && _headers.All(h => request.Headers[h.Key] == h.Value)
                    && (_body == null || _body.Equals(body))
                    && (_jsonBody == null || MatchesJsonBody(body));
         }
@@ -109,6 +119,7 @@ namespace Sangria
             return collection1.All(p1 => collection2.Any(p2 => ObjectsAreEqual(p1, p2)));
         }
 
+        private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _queryStringParameters = new Dictionary<string, string>();
         private readonly IServer _server;
         private string _body;

@@ -9,7 +9,6 @@ namespace Sangria
 {
     public interface IGetStubConfiguration : IStubConfiguration
     {
-        IGetStubConfiguration WithQueryString(string name, string value);
     }
 
     public class GetStubConfiguration : IGetStubConfiguration
@@ -41,7 +40,7 @@ namespace Sangria
             return _server;
         }
 
-        public IGetStubConfiguration WithQueryString(string name, string value)
+        public IStubConfiguration WithQueryStringParameter(string name, string value)
         {
             if (_queryStringParameters.ContainsKey(name))
                 throw new InvalidBindingException(string.Format(Errors.DuplicateQueryStringParameter, name));
@@ -51,11 +50,23 @@ namespace Sangria
             return this;
         }
 
-        public bool MatchesRequest(HttpListenerRequest request)
+        public IStubConfiguration WithHeader(HttpRequestHeader header, string value)
         {
-            return _queryStringParameters.All(q => request.QueryString[q.Key] == q.Value);
+            if (_headers.ContainsKey(header.ToString()))
+                throw new InvalidBindingException(string.Format(Errors.DuplicateHeaderParameter, header));
+
+            _headers.Add(header.ToString(), value);
+
+            return this;
         }
 
+        public bool MatchesRequest(HttpListenerRequest request)
+        {
+            return _queryStringParameters.All(q => request.QueryString[q.Key] == q.Value) &&
+                   _headers.All(h => request.Headers[h.Key] == h.Value);
+        }
+
+        private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _queryStringParameters = new Dictionary<string, string>();
         private readonly IServer _server;
     }

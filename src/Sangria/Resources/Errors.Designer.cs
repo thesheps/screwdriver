@@ -70,6 +70,15 @@ namespace Sangria.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified header &apos;{0}&apos; has already been registered for the binding..
+        /// </summary>
+        internal static string DuplicateHeaderParameter {
+            get {
+                return ResourceManager.GetString("DuplicateHeaderParameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified query string key &apos;{0}&apos; has already been registered for the binding..
         /// </summary>
         internal static string DuplicateQueryStringParameter {

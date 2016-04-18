@@ -68,8 +68,7 @@ namespace Sangria
 
             if (configurations.Any())
             {
-                var configuration = configurations.SingleOrDefault(c => c.MatchesRequest(context.Request)) ?? 
-                                    configurations.FirstOrDefault(c => c.IsFallback);
+                var configuration = configurations.SingleOrDefault(c => c.MatchesRequest(context.Request)) ?? configurations.FirstOrDefault(c => c.IsFallback);
 
                 if (configuration != null)
                 {

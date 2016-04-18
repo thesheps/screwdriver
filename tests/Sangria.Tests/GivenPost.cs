@@ -67,7 +67,7 @@ namespace Sangria.Tests
 
             using (var server = new Server(port)
                 .OnPost("Test")
-                .WithQueryString("id", "1")
+                .WithQueryStringParameter("id", "1")
                 .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse)))
             {
                 server.Start();
@@ -89,10 +89,10 @@ namespace Sangria.Tests
 
             using (var server = new Server(port)
                 .OnPost("Test")
-                   .WithQueryString("id", "1")
+                   .WithQueryStringParameter("id", "1")
                    .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse))
                 .OnPost("Test")
-                   .WithQueryString("id", "3")
+                   .WithQueryStringParameter("id", "3")
                    .Returns(new StubResponse(HttpStatusCode.Ambiguous, expectedResponse)))
             {
                 server.Start();
@@ -114,8 +114,8 @@ namespace Sangria.Tests
 
             using (var server = new Server(port)
                 .OnPost("Test")
-                   .WithQueryString("firstName", "bob")
-                   .WithQueryString("surname", "marley")
+                   .WithQueryStringParameter("firstName", "bob")
+                   .WithQueryStringParameter("surname", "marley")
                    .Returns(new StubResponse(HttpStatusCode.OK, expectedResponse)))
             {
                 server.Start();
@@ -137,8 +137,8 @@ namespace Sangria.Tests
 
             using (var server = new Server(port)
                 .OnPost("Test")
-                    .WithQueryString("firstName", "bob")
-                    .WithQueryString("surname", "marley")
+                    .WithQueryStringParameter("firstName", "bob")
+                    .WithQueryStringParameter("surname", "marley")
                     .Fallback()
                         .Returns(new StubResponse(HttpStatusCode.OK, expectedFallback)))
             {
@@ -229,6 +229,29 @@ namespace Sangria.Tests
         }
 
         [Test]
+        public void WhenICreateABindingWithASpecificHttpHeader_AndMakeARequestWithTheCorrectDetails_ThenTheResponseIsReturned()
+        {
+            const int port = 8080;
+            const string expectedValue = "<html><body>Success!</body></html>";
+
+            using (var server = new Server(port)
+                .OnPost("Test")
+                    .WithHeader(HttpRequestHeader.ContentType, "Test")
+                        .Returns(new StubResponse(HttpStatusCode.OK, expectedValue)))
+            {
+                server.Start();
+
+                var client = new RestClient($"http://localhost:{port}");
+                var restRequest = new RestRequest("test");
+                restRequest.AddHeader(HttpRequestHeader.ContentType.ToString(), "Test");
+
+                var response = client.Post(restRequest);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(response.Content, Is.EqualTo(expectedValue));
+            }
+        }
+
+        [Test]
         public void WhenITryToRegisterADuplicateQueryStringAndMakePostRequest_ThenDuplicateBindingExceptionIsThrown()
         {
             const int port = 8080;
@@ -237,8 +260,8 @@ namespace Sangria.Tests
             {
                 new Server(port)
                     .OnPost("Test")
-                        .WithQueryString("id", "1")
-                        .WithQueryString("id", "2");
+                        .WithQueryStringParameter("id", "1")
+                        .WithQueryStringParameter("id", "2");
             });
         }
     }

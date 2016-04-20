@@ -98,6 +98,7 @@ namespace Sangria
 
                 if (configuration != null)
                 {
+                    configuration.Execute();
                     buffer = Encoding.UTF8.GetBytes(configuration.StubbedResponse.Body);
                     context.Response.StatusCode = (int)configuration.StubbedResponse.StatusCode;
                 }

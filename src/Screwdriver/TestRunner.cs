@@ -5,11 +5,11 @@ namespace Screwdriver
 {
     public class TestRunner
     {
-        public TestRunner(IList<Assembly> getAssemblies)
+        public TestRunner(IList<Assembly> assemblies)
         {
-            _getAssemblies = getAssemblies;
+            _assemblies = assemblies;
         }
 
-        private readonly IList<Assembly> _getAssemblies;
+        private readonly IList<Assembly> _assemblies;
     }
 }

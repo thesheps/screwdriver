@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Sangria.Exceptions;
-using Sangria.Resources;
 
 namespace Sangria
 {
@@ -17,53 +12,13 @@ namespace Sangria
         IPostStubConfiguration WithJson(object json);
     }
 
-    public class PostStubConfiguration : IPostStubConfiguration
+    public class PostStubConfiguration : StubConfiguration, IPostStubConfiguration
     {
-        public HttpVerb HttpVerb => HttpVerb.Post;
-        public string Resource { get; }
-        public bool IsFallback { get; private set; }
-        public StubResponse StubbedResponse { get; private set; }
+        public override HttpVerb HttpVerb => HttpVerb.Post;
 
         public PostStubConfiguration(IServer server, string resource)
+            : base(server, resource)
         {
-            _server = server;
-            Resource = resource;
-        }
-
-        public IStubConfiguration Fallback()
-        {
-            if (_server.Configurations.Any(c => c.Resource.Equals(Resource, StringComparison.InvariantCultureIgnoreCase) && c.IsFallback))
-                throw new DuplicateFallbackException(Resource);
-
-            IsFallback = true;
-
-            return this;
-        }
-
-        public IServer Returns(StubResponse response)
-        {
-            StubbedResponse = response;
-            return _server;
-        }
-
-        public IStubConfiguration WithQueryStringParameter(string name, string value)
-        {
-            if (_queryStringParameters.ContainsKey(name))
-                throw new InvalidBindingException(string.Format(Errors.DuplicateQueryStringParameter, name));
-
-            _queryStringParameters.Add(name, value);
-
-            return this;
-        }
-
-        public IStubConfiguration WithHeader(HttpRequestHeader header, string value)
-        {
-            if (_headers.ContainsKey(header.ToString()))
-                throw new InvalidBindingException(string.Format(Errors.DuplicateHeaderParameter, header));
-
-            _headers.Add(header.ToString(), value);
-
-            return this;
         }
 
         public IPostStubConfiguration WithBody(string body)
@@ -78,14 +33,14 @@ namespace Sangria
             return this;
         }
 
-        public bool MatchesRequest(HttpListenerRequest request)
+        public override bool MatchesRequest(HttpListenerRequest request)
         {
             var reader = new StreamReader(request.InputStream);
             var body = reader.ReadToEnd();
 
-            return _queryStringParameters.All(q => request.QueryString[q.Key] == q.Value) && 
-                   _headers.All(h => request.Headers[h.Key] == h.Value) && 
-                   (_body == null || _body.Equals(body)) && 
+            return QueryStringParameters.All(q => request.QueryString[q.Key] == q.Value) &&
+                   Headers.All(h => request.Headers[h.Key] == h.Value) &&
+                   (_body == null || _body.Equals(body)) &&
                    (_jsonBody == null || MatchesJsonBody(body));
         }
 
@@ -98,9 +53,6 @@ namespace Sangria
             return JToken.DeepEquals(j1, j2);
         }
 
-        private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
-        private readonly Dictionary<string, string> _queryStringParameters = new Dictionary<string, string>();
-        private readonly IServer _server;
         private string _body;
         private object _jsonBody;
     }

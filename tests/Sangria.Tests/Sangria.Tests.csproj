@@ -52,6 +52,7 @@
     <Compile Include="GivenPut.cs" />
     <Compile Include="GivenPost.cs" />
     <Compile Include="GivenGet.cs" />
+    <Compile Include="GivenServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

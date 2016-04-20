@@ -11,7 +11,10 @@ namespace Sangria
         IList<IStubConfiguration> Configurations { get; }
         IGetStubConfiguration OnGet(string resource);
         IPostStubConfiguration OnPost(string resource);
+        IPutStubConfiguration OnPut(string resource);
+        IDeleteStubConfiguration OnDelete(string resource);
         void Start();
+        void Stop();
     }
 
     public class Server : IServer
@@ -31,6 +34,11 @@ namespace Sangria
             _listener.BeginGetContext(ProcessRequest, _listener);
         }
 
+        public void Stop()
+        {
+            _listener.Stop();
+        }
+
         public IGetStubConfiguration OnGet(string resource)
         {
             var stubConfiguration = new GetStubConfiguration(this, resource);
@@ -47,9 +55,27 @@ namespace Sangria
             return stubConfiguration;
         }
 
+        public IPutStubConfiguration OnPut(string resource)
+        {
+            var stubConfiguration = new PutStubConfiguration(this, resource);
+            Configurations.Add(stubConfiguration);
+
+            return stubConfiguration;
+        }
+
+        public IDeleteStubConfiguration OnDelete(string resource)
+        {
+            var stubConfiguration = new DeleteStubConfiguration(this, resource);
+            Configurations.Add(stubConfiguration);
+
+            return stubConfiguration;
+        }
+
         public void Dispose()
         {
             _listener.Stop();
+            _listener = null;
+            Configurations.Clear();
         }
 
         private void ProcessRequest(IAsyncResult result)
@@ -81,6 +107,6 @@ namespace Sangria
             context.Response.Close();
         }
 
-        private readonly HttpListener _listener;
+        private HttpListener _listener;
     }
 }

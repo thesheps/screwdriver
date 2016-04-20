@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GivenDelete.cs" />
+    <Compile Include="GivenPut.cs" />
     <Compile Include="GivenPost.cs" />
     <Compile Include="GivenGet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

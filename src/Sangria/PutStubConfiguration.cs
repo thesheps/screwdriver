@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sangria.Exceptions;
@@ -11,20 +10,20 @@ using Sangria.Resources;
 
 namespace Sangria
 {
-    public interface IPostStubConfiguration : IStubConfiguration
+    public interface IPutStubConfiguration : IStubConfiguration
     {
-        IPostStubConfiguration WithBody(string body);
-        IPostStubConfiguration WithJson(object json);
+        IPutStubConfiguration WithBody(string body);
+        IPutStubConfiguration WithJson(object json);
     }
 
-    public class PostStubConfiguration : IPostStubConfiguration
+    public class PutStubConfiguration : IPutStubConfiguration
     {
-        public HttpVerb HttpVerb => HttpVerb.Post;
+        public HttpVerb HttpVerb => HttpVerb.Put;
         public string Resource { get; }
         public bool IsFallback { get; private set; }
         public StubResponse StubbedResponse { get; private set; }
 
-        public PostStubConfiguration(IServer server, string resource)
+        public PutStubConfiguration(IServer server, string resource)
         {
             _server = server;
             Resource = resource;
@@ -66,13 +65,13 @@ namespace Sangria
             return this;
         }
 
-        public IPostStubConfiguration WithBody(string body)
+        public IPutStubConfiguration WithBody(string body)
         {
             _body = body;
             return this;
         }
 
-        public IPostStubConfiguration WithJson(object json)
+        public IPutStubConfiguration WithJson(object json)
         {
             _jsonBody = json;
             return this;
@@ -83,7 +82,7 @@ namespace Sangria
             var reader = new StreamReader(request.InputStream);
             var body = reader.ReadToEnd();
 
-            return _queryStringParameters.All(q => request.QueryString[q.Key] == q.Value) && 
+            return _queryStringParameters.All(q => request.QueryString[q.Key] == q.Value) &&
                    _headers.All(h => request.Headers[h.Key] == h.Value) && 
                    (_body == null || _body.Equals(body)) && 
                    (_jsonBody == null || MatchesJsonBody(body));

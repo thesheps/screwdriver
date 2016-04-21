@@ -79,7 +79,9 @@ namespace Sangria
 
         public void Dispose()
         {
-            _listener?.Stop();
+            if (_listener.IsListening)
+                _listener.Stop();
+
             Configurations?.Clear();
             _listener = null;
         }

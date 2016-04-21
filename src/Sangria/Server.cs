@@ -79,9 +79,9 @@ namespace Sangria
 
         public void Dispose()
         {
-            _listener?.Stop();
+            _listener.Stop();
             _listener = null;
-            Configurations?.Clear();
+            Configurations.Clear();
         }
 
         private void ProcessRequest(IAsyncResult result)

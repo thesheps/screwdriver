@@ -13,7 +13,7 @@ namespace Sangria
         string Resource { get; }
         StubResponse StubbedResponse { get; }
         HttpVerb HttpVerb { get; }
-        IStubConfiguration Fallback();
+        IStubConfiguration AsFallback();
         IStubConfiguration WithHeader(HttpRequestHeader header, string value);
         IStubConfiguration WithQueryStringParameter(string name, string value);
         IServer Returns(StubResponse response);
@@ -26,9 +26,12 @@ namespace Sangria
     {
         public abstract HttpVerb HttpVerb { get; }
 
-        public bool IsFallback { get; private set; }
         public string Resource { get; }
-        public StubResponse StubbedResponse { get; private set; }
+        public bool IsFallback { get; protected set; }
+        public StubResponse StubbedResponse { get; protected set; }
+
+        protected Dictionary<string, string> Headers = new Dictionary<string, string>();
+        protected Dictionary<string, string> QueryStringParameters = new Dictionary<string, string>();
 
         protected StubConfiguration(IServer server, string resource)
         {
@@ -36,7 +39,7 @@ namespace Sangria
             Resource = resource;
         }
 
-        public IStubConfiguration Fallback()
+        public IStubConfiguration AsFallback()
         {
             if (_server.Configurations.Any(c => c.Resource.Equals(Resource, StringComparison.InvariantCultureIgnoreCase) && c.IsFallback))
                 throw new DuplicateFallbackException(Resource);
@@ -80,12 +83,15 @@ namespace Sangria
         public void Execute()
         {
             _calls++;
+            OnExecute();
+        }
+
+        protected virtual void OnExecute()
+        {
         }
 
         public abstract bool MatchesRequest(HttpListenerRequest request);
 
-        protected readonly Dictionary<string, string> Headers = new Dictionary<string, string>();
-        protected readonly Dictionary<string, string> QueryStringParameters = new Dictionary<string, string>();
         private readonly IServer _server;
         private int _calls;
     }

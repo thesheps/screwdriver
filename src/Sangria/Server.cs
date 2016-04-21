@@ -13,6 +13,7 @@ namespace Sangria
         IPostStubConfiguration OnPost(string resource);
         IPutStubConfiguration OnPut(string resource);
         IDeleteStubConfiguration OnDelete(string resource);
+        void AddStubConfiguration(IStubConfiguration stubConfiguration);
         void Start();
         void Stop();
     }
@@ -69,6 +70,11 @@ namespace Sangria
             Configurations.Add(stubConfiguration);
 
             return stubConfiguration;
+        }
+
+        public void AddStubConfiguration(IStubConfiguration stubConfiguration)
+        {
+            Configurations.Add(stubConfiguration);
         }
 
         public void Dispose()

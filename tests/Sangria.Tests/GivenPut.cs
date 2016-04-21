@@ -139,7 +139,7 @@ namespace Sangria.Tests
                 .OnPut("Test")
                     .WithQueryStringParameter("firstName", "bob")
                     .WithQueryStringParameter("surname", "marley")
-                    .Fallback()
+                    .AsFallback()
                         .Returns(new StubResponse(HttpStatusCode.OK, expectedFallback)))
             {
                 server.Start();

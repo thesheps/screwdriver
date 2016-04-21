@@ -12,7 +12,7 @@ namespace Sangria.Tests
 
         public static void AddAddress(string address, string domain, string user)
         {
-            var args = $@"http add urlacl url={address} user={domain}\{user}";
+            var args = $@"http add urlacl url={address} user={domain}\{user} listen=yes";
             var psi = new ProcessStartInfo("netsh", args)
             {
                 Verb = "runas",

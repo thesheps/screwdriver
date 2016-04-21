@@ -7,6 +7,12 @@ namespace Sangria.Tests
 {
     public class GivenPut
     {
+        [SetUp]
+        public void SetUp()
+        {
+            NetAclChecker.AddAddress($"http://localhost:{Constants.Port}");
+        }
+
         [Test]
         public void WhenIPutAResourceWithNoPredefinedBindings_Then404IsReturned()
         {

@@ -7,6 +7,12 @@ namespace Sangria.Tests
 {
     public class GivenServer
     {
+        [SetUp]
+        public void SetUp()
+        {
+            NetAclChecker.AddAddress($"http://localhost:{Constants.Port}");
+        }
+
         [Test]
         public void WhenICallAGivenKnownStub_ThenICanAssertThatItHasBeenCalled()
         {

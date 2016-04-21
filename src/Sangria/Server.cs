@@ -26,7 +26,7 @@ namespace Sangria
         {
             Configurations = new List<IStubConfiguration>();
             _listener = new HttpListener();
-            _listener.Prefixes.Add($"http://localhost:{port}/");
+            _listener.Prefixes.Add($"http://+:{port}/");
         }
 
         public void Start()

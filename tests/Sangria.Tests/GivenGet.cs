@@ -38,7 +38,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenIGetAResourceWithNoPredefinedBindings_Then404IsReturned()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
 
             using (var server = new Server(port))
             {
@@ -53,7 +53,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenIMake2RequestsForAResourceWithNoPredefinedBindings_Then404IsReturnedTwice()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
 
             using (var server = new Server(port))
             {
@@ -71,7 +71,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenIRequestAKnownResource_ThenConfiguredResponseIsReturned()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -90,7 +90,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingWithASpecificQueryString_AndMakeARequestWithNoQueryString_Then404()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -112,7 +112,7 @@ namespace Sangria.Tests
         [TestCase("3", HttpStatusCode.Ambiguous)]
         public void WhenICreateABindingWithASpecificQueryString_AndMakeARequestWithQueryString_ThenConfiguredResponseIsReturned(string id, HttpStatusCode statusCode)
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -137,7 +137,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingWithASpecificQueryString_AndMakeARequestWithIncorrectQueryString_Then404()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -160,7 +160,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingForASpecificQueryStringAndSpecifyFallback_AndMakeARequestWithIncorrectQueryString_ThenBackupIsUsed()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedFallback = "<html><body>Fallback!</body></html>";
 
             using (var server = new Server(port)
@@ -185,7 +185,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingWithASpecificHttpHeader_AndMakeARequestWithTheCorrectDetails_ThenTheResponseIsReturned()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedValue = "<html><body>Success!</body></html>";
 
             using (var server = new Server(port)
@@ -208,7 +208,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenITryToRegisterDuplicateQueryString_ThenDuplicateBindingExceptionIsThrown()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
 
             Assert.Throws<InvalidBindingException>(() =>
             {

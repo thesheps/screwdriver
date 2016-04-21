@@ -10,7 +10,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenIPutAResourceWithNoPredefinedBindings_Then404IsReturned()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
 
             using (var server = new Server(port))
             {
@@ -25,7 +25,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenIMake2PutRequestsForAResourceWithNoPredefinedBindings_Then404IsReturnedTwice()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
 
             using (var server = new Server(port))
             {
@@ -43,7 +43,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenIPutAKnownResource_ThenConfiguredResponseIsReturned()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -62,7 +62,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingWithASpecificQueryString_AndPutWithNoQueryString_Then404()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -84,7 +84,7 @@ namespace Sangria.Tests
         [TestCase("3", HttpStatusCode.Ambiguous)]
         public void WhenICreateABindingWithASpecificQueryString_AndMakeAPutRequestWithQueryString_ThenConfiguredResponseIsReturned(string id, HttpStatusCode statusCode)
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -109,7 +109,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingWithASpecificQueryString_AndMakeAPutRequestWithIncorrectQueryString_Then404()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -132,7 +132,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingForASpecificQueryStringAndSpecifyFallback_AndMakeAPutRequestWithIncorrectQueryString_ThenFallbackIsUsed()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedFallback = "<html><body>Fallback!</body></html>";
 
             using (var server = new Server(port)
@@ -157,7 +157,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingForSpecificPutBody_AndMakePutRequestWithCorrectData_ThenStubIsUsed()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Success!</body></html>";
             const string putData = "Hello World.";
 
@@ -181,7 +181,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingForSpecificJsonBody_AndMakePutRequestWithCorrectJsonData_ThenStubIsUsed()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Success!</body></html>";
 
             var json = new { FirstName = "Boby", Surname = "Marley" };
@@ -206,7 +206,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingForSpecificJsonBodyWithACollection_AndMakePutRequestWithCorrectJsonData_ThenStubIsUsed()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Success!</body></html>";
 
             var json = new { Values = new[] { new { One = 1, Two = 2, Three = 3 }, new { One = 1, Two = 2, Three = 3 } } };
@@ -231,7 +231,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICreateABindingWithASpecificHttpHeader_AndMakeARequestWithTheCorrectDetails_ThenTheResponseIsReturned()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedValue = "<html><body>Success!</body></html>";
 
             using (var server = new Server(port)
@@ -254,7 +254,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenITryToRegisterADuplicateQueryStringAndMakePutRequest_ThenDuplicateBindingExceptionIsThrown()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
 
             Assert.Throws<InvalidBindingException>(() =>
             {

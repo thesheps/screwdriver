@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="GivenDelete.cs" />
     <Compile Include="GivenPut.cs" />
     <Compile Include="GivenPost.cs" />

@@ -10,7 +10,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenICallAGivenKnownStub_ThenICanAssertThatItHasBeenCalled()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port)
@@ -29,7 +29,7 @@ namespace Sangria.Tests
         [Test]
         public void WhenIHaveAStubImplementation_ThenICanAssertThatItHasBeenCalled()
         {
-            const int port = 8080;
+            const int port = Constants.Port;
             const string expectedResponse = "<html><body>Great success!</body></html>";
 
             using (var server = new Server(port))

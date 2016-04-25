@@ -54,7 +54,6 @@
     <Compile Include="GivenPost.cs" />
     <Compile Include="GivenGet.cs" />
     <Compile Include="GivenServer.cs" />
-    <Compile Include="NetAclChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestClasses\TestGetStubConfiguration.cs" />
   </ItemGroup>

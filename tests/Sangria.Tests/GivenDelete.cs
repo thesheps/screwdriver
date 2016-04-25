@@ -7,12 +7,6 @@ namespace Sangria.Tests
 {
     public class GivenDelete
     {
-        [SetUp]
-        public void SetUp()
-        {
-            NetAclChecker.AddAddress($"http://localhost:{Constants.Port}");
-        }
-
         [Test]
         public void WhenIDeleteAResourceWithNoPredefinedBindings_Then404IsReturned()
         {

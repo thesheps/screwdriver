@@ -16,11 +16,8 @@ if "%nuget%" == "" (
 )
 
 REM Restore
-call %NuGet% restore src\Screwdriver\packages.config -OutputDirectory %cd%\packages -NonInteractive
 call %NuGet% restore tests\Screwdriver.Tests\packages.config -OutputDirectory %cd%\packages -NonInteractive
-call %NuGet% restore src\Sidecar\packages.config -OutputDirectory %cd%\packages -NonInteractive
 call %NuGet% restore tests\Sidecar.Tests\packages.config -OutputDirectory %cd%\packages -NonInteractive
-call %NuGet% restore src\Spritz\packages.config -OutputDirectory %cd%\packages -NonInteractive
 call %NuGet% restore tests\Spritz.Tests\packages.config -OutputDirectory %cd%\packages -NonInteractive
 call %NuGet% restore src\Sangria\packages.config -OutputDirectory %cd%\packages -NonInteractive
 call %NuGet% restore tests\Sangria.Tests\packages.config -OutputDirectory %cd%\packages -NonInteractive

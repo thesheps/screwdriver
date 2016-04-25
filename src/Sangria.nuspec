@@ -11,12 +11,12 @@
     <description>A simple http stubbing framework.</description>
     <releaseNotes></releaseNotes>
     <tags>unit testing fluent http stubbing mocking self-host</tags>
+
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="8.0.3" />
+    </dependencies>
   </metadata>
 
-  <dependencies>
-    <dependency id="Newtonsoft.Json" version="8.0.3" targetFramework="net45" />
-  </dependencies>
-  
   <files>
     <file src="Sangria\bin\$configuration$\Sangria.dll" target="lib" />
   </files>

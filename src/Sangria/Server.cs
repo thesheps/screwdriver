@@ -87,9 +87,10 @@ namespace Sangria
         private void ProcessRequest(IAsyncResult result)
         {
             var listener = (HttpListener)result.AsyncState;
+            if (listener == null || !listener.IsListening)
+                return;
 
-            if (listener != null && listener.IsListening)
-                listener.BeginGetContext(ProcessRequest, listener);
+            listener.BeginGetContext(ProcessRequest, listener);
 
             var buffer = Encoding.UTF8.GetBytes(Resources.Html.MissingStub);
             var context = listener.EndGetContext(result);

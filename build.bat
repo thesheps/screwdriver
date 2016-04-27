@@ -31,6 +31,7 @@ call %nuget% install NUnit.Runners -Version 2.6.4 -OutputDirectory packages
 packages\NUnit.Runners.2.6.4\tools\nunit-console.exe /config:%config% /framework:net-4.5 tests\Screwdriver.Tests\bin\%config%\Screwdriver.Tests.dll
 packages\NUnit.Runners.2.6.4\tools\nunit-console.exe /config:%config% /framework:net-4.5 tests\Sidecar.Tests\bin\%config%\Sidecar.Tests.dll
 packages\NUnit.Runners.2.6.4\tools\nunit-console.exe /config:%config% /framework:net-4.5 tests\Spritz.Tests\bin\%config%\Spritz.Tests.dll
+packages\NUnit.Runners.2.6.4\tools\nunit-console.exe /config:%config% /framework:net-4.5 tests\Sangria.Tests\bin\%config%\Sangria.Tests.dll
 if not "%errorlevel%"=="0" goto failure
 
 REM Package
